@@ -18,4 +18,7 @@ interface BoxRepository
     public function findByCampaign(int $campaignId): array;
 
     public function getById(int $id): ?Box;
+
+    /** @return string[] Liste des IDs d'articles dans la box */
+    public function getArticleIdsByBoxId(int $boxId): array;
 }

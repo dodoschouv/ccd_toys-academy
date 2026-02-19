@@ -66,6 +66,14 @@ final class PdoBoxRepository implements BoxRepository
         return $row ? $this->rowToBox($row) : null;
     }
 
+    /** @return string[] */
+    public function getArticleIdsByBoxId(int $boxId): array
+    {
+        $stmt = $this->pdo->prepare('SELECT article_id FROM box_article WHERE box_id = ? ORDER BY article_id');
+        $stmt->execute([$boxId]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
     private function rowToBox(array $row): Box
     {
         return new Box(

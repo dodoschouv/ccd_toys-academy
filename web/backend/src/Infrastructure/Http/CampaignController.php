@@ -7,6 +7,7 @@ namespace ToysAcademy\Infrastructure\Http;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ToysAcademy\Application\CreateCampaign;
+use ToysAcademy\Application\ListBoxesForCampaign;
 use ToysAcademy\Application\ListCampaigns;
 use ToysAcademy\Application\RunComposition;
 use ToysAcademy\Domain\Campaign;
@@ -17,6 +18,7 @@ final class CampaignController
         private ListCampaigns $listCampaigns,
         private CreateCampaign $createCampaign,
         private RunComposition $runComposition,
+        private ListBoxesForCampaign $listBoxesForCampaign,
     ) {
     }
 
@@ -75,5 +77,25 @@ final class CampaignController
         }
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
+    }
+
+    public function boxes(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $campaignId = (int) ($args['id'] ?? 0);
+        if ($campaignId <= 0) {
+            $response->getBody()->write(json_encode(['error' => 'Campagne invalide']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+        try {
+            $boxes = ($this->listBoxesForCampaign)($campaignId);
+        } catch (\RuntimeException $e) {
+            if ($e->getCode() === 404) {
+                $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+            }
+            throw $e;
+        }
+        $response->getBody()->write(json_encode($boxes));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 }
