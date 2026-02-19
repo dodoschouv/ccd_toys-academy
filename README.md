@@ -54,7 +54,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | **W16** | Validation des box (admin) : validation individuelle, retrait du stock, historique (12) | ✅ Fait — `POST /api/admin/boxes/{id}/validate` |
 | **W17** | Historique box d’un abonné (14) | ❌ Non fait |
 | **W18** | Historique global (admin) : campagnes, synthèse (15) | ❌ Non fait |
-| **W19** | Authentification : différencier abonné / gestionnaire (16) | ❌ Non fait |
+| **W19** | Authentification : différencier abonné / gestionnaire (16) | ⚠️ Partiel — Connexion/inscription abonné avec JWT (POST `/api/auth/login`, `/api/auth/register`, GET `/api/auth/me`) ; token stocké côté front, envoyé en `Authorization: Bearer`. Pas encore de protection des routes admin par rôle |
 | **W20** | Tableau de bord (admin) : stats stock, abonnés actifs, score moyen (17) | ❌ Non fait |
 
 ### Super avancé (si temps)
@@ -71,6 +71,9 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | Méthode | Route | Rôle |
 |--------|--------|------|
 | GET | `/api/health` | Health check |
+| POST | `/api/auth/login` | Connexion (body : `email`, `password`) → retourne `{ token, user }` JWT |
+| POST | `/api/auth/register` | Inscription avec mot de passe (body : `email`, `password`, `first_name`, `last_name`, `child_age_range`, `preferences`) → crée abonné + user, retourne `{ token, user }` |
+| GET | `/api/auth/me` | Utilisateur courant (header `Authorization: Bearer <token>`) ; optionnellement avec `subscriber` |
 | GET | `/api/reference` | Catégories, tranches d’âge, états (formulaires) |
 | GET | `/api/articles` | Catalogue paginé (`page`, `per_page`) ; filtres optionnels : `category`, `age_range`, `state` |
 | GET | `/api/articles/{id}` | Détail article |
@@ -99,7 +102,12 @@ docker-compose.yml  # web-backend, web-frontend, db
 database/           # schema.sql (init MariaDB)
 ```
 
+## Dépendances backend (composer)
+
+- **Avec Docker** : `composer install` est exécuté **à chaque build** de l'image (`docker compose up --build`). Aucune action à faire.
+- **Sans Docker** : à la racine, lancer `./scripts/install-backend-deps.sh` (Linux/Mac/Git Bash) ou `.\scripts\install-backend-deps.ps1` (PowerShell), ou dans `web/backend/` : `composer install`.
+
 ## Dev local (sans Docker)
 
-- **Backend** : dans `web/backend/`, `composer install` puis `php -S 0.0.0.0:8080 -t public/`
+- **Backend** : dans `web/backend/`, `composer install` (inclut `firebase/php-jwt` pour l’auth) puis `php -S 0.0.0.0:8080 -t public/`. Optionnel : définir `JWT_SECRET` dans l’environnement (sinon une valeur par défaut est utilisée en dev).
 - **Frontend** : dans `web/frontend/`, `npm install` puis `npm run dev` (Vite proxy `/api` → `http://localhost:8080`)

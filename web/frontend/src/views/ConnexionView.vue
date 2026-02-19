@@ -1,7 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '../api/index.js'
+import { useAuthStore } from '../stores/authStore.js'
 import { setSubscriberEmail, getSubscriberEmail, clearSubscriberEmail } from '../utils/subscriberCookie.js'
+
+const router = useRouter()
+const authStore = useAuthStore()
 
 const base = import.meta.env.VITE_API_URL ? '' : '/api'
 const subscribersPath = () => `${base}/subscribers`
@@ -15,6 +20,8 @@ const password = ref('')
 const lastName = ref('')
 const firstName = ref('')
 const subscriberEmail = ref('')
+const passwordInscription = ref('')
+const passwordConfirm = ref('')
 const childAgeRange = ref('')
 const preferences = ref(['SOC', 'FIG', 'CON', 'EXT', 'EVL', 'LIV'])
 const categories = [
@@ -35,7 +42,6 @@ const ageRanges = [
 const connexionError = ref('')
 const inscriptionMessage = ref('')
 const inscriptionError = ref('')
-const inscriptionLoading = ref(false)
 const profileLoadedFromCookie = ref(false)
 
 async function loadProfileByEmail(emailValue) {
@@ -72,9 +78,17 @@ async function submitConnexion() {
     connexionError.value = 'Saisissez votre email.'
     return
   }
-  // Pour l'instant pas d'auth côté API : on peut pré-remplir et rediriger vers Ma box ou Inscription
-  activeSection.value = 'inscription'
-  await loadProfileByEmail(email.value)
+  if (!password.value) {
+    connexionError.value = 'Saisissez votre mot de passe.'
+    return
+  }
+  const result = await authStore.login(email.value, password.value)
+  if (result.success) {
+    setSubscriberEmail(authStore.user?.email ?? email.value)
+    router.push('/ma-box')
+  } else {
+    connexionError.value = result.error ?? 'Identifiants incorrects'
+  }
 }
 
 async function submitInscription() {
@@ -88,21 +102,28 @@ async function submitInscription() {
     inscriptionError.value = 'Choisissez la tranche d\'âge de l\'enfant.'
     return
   }
-  inscriptionLoading.value = true
-  try {
-    await api.post(subscribersPath(), {
-      last_name: lastName.value.trim(),
-      first_name: firstName.value.trim(),
-      email: subscriberEmail.value.trim(),
-      child_age_range: childAgeRange.value,
-      preferences: preferences.value,
-    })
+  if (!passwordInscription.value || passwordInscription.value.length < 6) {
+    inscriptionError.value = 'Le mot de passe doit faire au moins 6 caractères.'
+    return
+  }
+  if (passwordInscription.value !== passwordConfirm.value) {
+    inscriptionError.value = 'Les deux mots de passe ne correspondent pas.'
+    return
+  }
+  const result = await authStore.register({
+    email: subscriberEmail.value.trim(),
+    password: passwordInscription.value,
+    first_name: firstName.value.trim(),
+    last_name: lastName.value.trim(),
+    child_age_range: childAgeRange.value,
+    preferences: preferences.value,
+  })
+  if (result.success) {
     setSubscriberEmail(subscriberEmail.value.trim())
-    inscriptionMessage.value = 'Inscription enregistrée. Vos informations seront réutilisées lors de votre prochaine visite.'
-  } catch (e) {
-    inscriptionError.value = e.response?.data?.error || 'Erreur lors de l\'inscription.'
-  } finally {
-    inscriptionLoading.value = false
+    inscriptionMessage.value = 'Compte créé. Redirection…'
+    router.push('/ma-box')
+  } else {
+    inscriptionError.value = result.error ?? 'Erreur lors de l\'inscription.'
   }
 }
 
@@ -110,13 +131,22 @@ function useAnotherEmail() {
   clearSubscriberEmail()
   profileLoadedFromCookie.value = false
   email.value = ''
+  password.value = ''
   lastName.value = ''
   firstName.value = ''
   subscriberEmail.value = ''
+  passwordInscription.value = ''
+  passwordConfirm.value = ''
   childAgeRange.value = ''
   preferences.value = ['SOC', 'FIG', 'CON', 'EXT', 'EVL', 'LIV']
   inscriptionMessage.value = ''
   inscriptionError.value = ''
+}
+
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+function logout() {
+  authStore.logout()
+  useAnotherEmail()
 }
 
 function movePreference(index, direction) {
@@ -131,6 +161,14 @@ function movePreference(index, direction) {
 <template>
   <div class="max-w-2xl mx-auto px-4 py-8">
     <h2 class="text-xl font-semibold text-slate-800 mb-6">Connexion / Inscription</h2>
+
+    <div v-if="isAuthenticated" class="mb-6 p-4 rounded-lg border border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
+      <span class="text-slate-700">Connecté en tant que <strong>{{ authStore.user?.email }}</strong></span>
+      <div class="flex gap-2">
+        <router-link to="/ma-box" class="px-3 py-1.5 rounded-md bg-slate-800 text-white text-sm font-medium hover:bg-slate-700">Ma box</router-link>
+        <button type="button" @click="logout" class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-100">Déconnexion</button>
+      </div>
+    </div>
 
     <div class="flex gap-2 mb-8 border-b border-slate-200">
       <button
@@ -181,9 +219,10 @@ function movePreference(index, direction) {
         <p v-if="connexionError" class="text-sm text-red-600">{{ connexionError }}</p>
         <button
           type="submit"
-          class="w-full rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+          :disabled="authStore.loading"
+          class="w-full rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
         >
-          Se connecter
+          {{ authStore.loading ? 'Connexion…' : 'Se connecter' }}
         </button>
       </form>
     </section>
@@ -235,6 +274,28 @@ function movePreference(index, direction) {
           />
         </div>
         <div>
+          <label for="password-inscription" class="block text-sm font-medium text-slate-700 mb-1">Mot de passe (min. 6 caractères)</label>
+          <input
+            id="password-inscription"
+            v-model="passwordInscription"
+            type="password"
+            autocomplete="new-password"
+            class="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            placeholder="••••••••"
+          />
+        </div>
+        <div>
+          <label for="password-confirm" class="block text-sm font-medium text-slate-700 mb-1">Confirmer le mot de passe</label>
+          <input
+            id="password-confirm"
+            v-model="passwordConfirm"
+            type="password"
+            autocomplete="new-password"
+            class="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            placeholder="••••••••"
+          />
+        </div>
+        <div>
           <label for="age-range" class="block text-sm font-medium text-slate-700 mb-1">Tranche d'âge de l'enfant</label>
           <select
             id="age-range"
@@ -278,10 +339,10 @@ function movePreference(index, direction) {
         <p v-if="inscriptionMessage" class="text-sm text-green-600">{{ inscriptionMessage }}</p>
         <button
           type="submit"
-          :disabled="inscriptionLoading"
+          :disabled="authStore.loading"
           class="w-full rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
         >
-          {{ inscriptionLoading ? 'Enregistrement…' : 'Enregistrer' }}
+          {{ authStore.loading ? 'Enregistrement…' : 'Créer mon compte' }}
         </button>
       </form>
     </section>

@@ -1,11 +1,20 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import api from '../api/index.js'
+import { useAuthStore } from '../stores/authStore.js'
 
+const authStore = useAuthStore()
 const email = ref('')
 const loading = ref(false)
 const error = ref('')
 const boxes = ref([])
+
+onMounted(() => {
+  if (authStore.user?.email) {
+    email.value = authStore.user.email
+    fetchBox()
+  }
+})
 
 async function fetchBox() {
   const value = email.value.trim()
@@ -17,7 +26,8 @@ async function fetchBox() {
   loading.value = true
   boxes.value = []
   try {
-    const { data } = await api.get('/api/subscribers/box', { params: { email: value } })
+    const base = import.meta.env.VITE_API_URL ? '' : '/api'
+    const { data } = await api.get(`${base}/subscribers/box`, { params: { email: value } })
     boxes.value = Array.isArray(data) ? data : []
   } catch (e) {
     if (e.response?.status === 404) {

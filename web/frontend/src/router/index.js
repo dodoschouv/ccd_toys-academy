@@ -23,7 +23,6 @@ const router = createRouter({
       path: '/back-office',
       component: BackOfficeView,
       children: [
-        { path: '', redirect: 'campaigns' },
         { path: 'addarticle', name: 'add-article', component: AddArticleView,},
         { path: 'campaigns', name: 'back-office-campaigns', component: CampaignsView },
         { path: 'subscribers', name: 'back-office-subscribers', component: SubscribersView },

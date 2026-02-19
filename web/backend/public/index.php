@@ -17,11 +17,13 @@ use ToysAcademy\Application\Port\BoxRepository;
 use ToysAcademy\Application\Port\CampaignRepository;
 use ToysAcademy\Application\Port\OptimisationService;
 use ToysAcademy\Application\Port\SubscriberRepository;
+use ToysAcademy\Application\Port\UserRepository;
 use ToysAcademy\Application\RunComposition;
 use ToysAcademy\Application\SaveSubscriber;
 use ToysAcademy\Application\UpdateArticle;
 use ToysAcademy\Application\ValidateBox;
 use ToysAcademy\Infrastructure\Http\ArticleController;
+use ToysAcademy\Infrastructure\Http\AuthController;
 use ToysAcademy\Infrastructure\Http\BoxController;
 use ToysAcademy\Infrastructure\Http\CampaignController;
 use ToysAcademy\Infrastructure\Http\HttpOptimisationService;
@@ -31,6 +33,7 @@ use ToysAcademy\Infrastructure\Persistence\PdoArticleRepository;
 use ToysAcademy\Infrastructure\Persistence\PdoBoxRepository;
 use ToysAcademy\Infrastructure\Persistence\PdoCampaignRepository;
 use ToysAcademy\Infrastructure\Persistence\PdoSubscriberRepository;
+use ToysAcademy\Infrastructure\Persistence\PdoUserRepository;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -69,6 +72,7 @@ if ($databaseUrl !== '') {
 
     $articleRepository = new PdoArticleRepository($pdo);
     $subscriberRepository = new PdoSubscriberRepository($pdo);
+    $userRepository = new PdoUserRepository($pdo);
     $campaignRepository = new PdoCampaignRepository($pdo);
     $boxRepository = new PdoBoxRepository($pdo);
 
@@ -94,6 +98,11 @@ if ($databaseUrl !== '') {
     $subscriberController = new SubscriberController($saveSubscriber, $listSubscribers, $subscriberRepository, $getValidatedBoxesForSubscriberByEmail);
     $campaignController = new CampaignController($listCampaigns, $createCampaign, $runComposition, $listBoxesForCampaign);
     $boxController = new BoxController($validateBox);
+    $authController = new AuthController($userRepository, $subscriberRepository, $saveSubscriber);
+
+    $app->post('/api/auth/login', fn ($req, $res) => $authController->login($req, $res));
+    $app->post('/api/auth/register', fn ($req, $res) => $authController->register($req, $res));
+    $app->get('/api/auth/me', fn ($req, $res) => $authController->me($req, $res));
 
     $app->get('/api/reference', fn ($req, $res) => $referenceController->index($req, $res));
     $app->get('/api/articles', fn ($req, $res) => $articleController->index($req, $res));
