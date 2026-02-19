@@ -9,13 +9,9 @@ function isActive(path) {
 </script>
 
 <template>
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+  <header class="fixed top-0 left-0 right-0 z-20 bg-white border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
-      <div class="flex h-14 items-center justify-between">
-        <RouterLink to="/home" class="text-lg font-semibold text-slate-900 tracking-tight">
-          Toys Academy
-        </RouterLink>
-
+      <div class="flex h-14 items-center justify-center">
         <nav class="flex items-center gap-1 text-sm">
           <RouterLink
             to="/home"

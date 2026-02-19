@@ -7,7 +7,7 @@ import Header from './components/Header.vue'
   <div class="min-h-screen bg-slate-50">
     <Header />
 
-    <main class="py-6">
+    <main class="pt-[3.5rem] pb-6">
       <router-view />
     </main>
   </div>
