@@ -23,6 +23,8 @@ Application web de gestion d’articles et d’abonnés, avec composition de box
 
 Pour consulter les choix des technologies : [POURQUOI.md](POURQUOI.md).
 
+<img width="1897" height="944" alt="image" src="https://github.com/user-attachments/assets/c569b2bb-e283-4f66-b20d-63f7d81f4608" />
+
 
 ## Lancer le projet
 
