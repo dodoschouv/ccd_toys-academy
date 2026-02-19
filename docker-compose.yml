@@ -1,16 +1,30 @@
 services:
-  web:
+  web-backend:
     build:
-      context: ./web
+      context: ./web/backend
       dockerfile: Dockerfile
-    ports:
-      - "8080:80"
+    expose:
+      - "80"
     environment:
       - DATABASE_URL=mysql://toys:toys@db:3306/toys_academy
-      - OPTIMIZATION_URL=http://optimization:8000
+      - OPTIMIZATION_URL=http://optimization:80
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:8080}
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - toys-net
+
+  web-frontend:
+    build:
+      context: ./web/frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=/api
+    ports:
+      - "8080:80"
+    depends_on:
+      - web-backend
     networks:
       - toys-net
 
@@ -18,10 +32,8 @@ services:
     build:
       context: ./optimization
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    environment:
-      - PYTHONUNBUFFERED=1
+    expose:
+      - "80"
     networks:
       - toys-net
 

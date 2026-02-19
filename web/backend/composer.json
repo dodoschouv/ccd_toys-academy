@@ -3,7 +3,7 @@
     "description": "API Toys Academy - PHP Slim",
     "type": "project",
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.5",
         "slim/slim": "^4.12",
         "slim/psr7": "^1.6"
     },

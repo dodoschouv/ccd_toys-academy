@@ -1,6 +1,3 @@
 RewriteEngine On
-RewriteBase /
-
-# Tout passer à Slim (API uniquement)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]
