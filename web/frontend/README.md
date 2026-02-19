@@ -2,15 +2,6 @@
 
 Interface Vue 3 pour le catalogue, l’inscription, la consultation des box et le back-office admin.
 
-## Liste des membres
-- CANDIDO DELLA MORA Léo (DACS)
-- SCHOUVER Doryan (DACS)
-- Hayrapetyan Arman (DWM-2)
-- Cazottes Alexandre (DWM-2)
-- Ozen Burak (DWM-2)
-- Delaborde Baptiste (DWM-2)
-- EVA Maxence (IL-2)
-
 ## Stack
 
 - Vue 3

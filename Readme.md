@@ -5,6 +5,16 @@ Application web de gestion d’articles et d’abonnés, avec composition de box
 
 **Application en live** : http://docketu.iutnc.univ-lorraine.fr:8082
 
+## Liste des membres
+- CANDIDO DELLA MORA Léo (DACS)
+- SCHOUVER Doryan (DACS)
+- Hayrapetyan Arman (DWM-2)
+- Cazottes Alexandre (DWM-2)
+- Ozen Burak (DWM-2)
+- Delaborde Baptiste (DWM-2)
+- EVA Maxence (IL-2)
+
+
 ## Stack
 
 - **Frontend** : Vue 3 + Vite + Tailwind CSS 4 (nginx)
@@ -13,6 +23,7 @@ Application web de gestion d’articles et d’abonnés, avec composition de box
 - **Base de données** : MariaDB 12
 
 Pour consulter les choix des technologies : [POURQUOI.md](POURQUOI.md).
+
 
 ## Lancer le projet
 
