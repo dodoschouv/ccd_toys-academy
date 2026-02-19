@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Slim\Factory\AppFactory;
+use Slim\Routing\RouteCollectorProxy;
 use ToysAcademy\Application\CreateArticle;
 use ToysAcademy\Application\CreateCampaign;
 use ToysAcademy\Application\DeleteArticle;
@@ -23,6 +24,7 @@ use ToysAcademy\Application\SaveSubscriber;
 use ToysAcademy\Application\UpdateArticle;
 use ToysAcademy\Application\ValidateBox;
 use ToysAcademy\Infrastructure\Http\ArticleController;
+use ToysAcademy\Infrastructure\Http\AdminAuthMiddleware;
 use ToysAcademy\Infrastructure\Http\AuthController;
 use ToysAcademy\Infrastructure\Http\BoxController;
 use ToysAcademy\Infrastructure\Http\CampaignController;
@@ -104,21 +106,30 @@ if ($databaseUrl !== '') {
     $app->post('/api/auth/register', fn ($req, $res) => $authController->register($req, $res));
     $app->get('/api/auth/me', fn ($req, $res) => $authController->me($req, $res));
 
+    $adminMiddleware = new AdminAuthMiddleware($userRepository);
+
     $app->get('/api/reference', fn ($req, $res) => $referenceController->index($req, $res));
     $app->get('/api/articles', fn ($req, $res) => $articleController->index($req, $res));
     $app->get('/api/articles/{id}', fn ($req, $res, $args) => $articleController->show($req, $res, $args));
-    $app->post('/api/admin/articles', fn ($req, $res) => $articleController->create($req, $res));
-    $app->put('/api/admin/articles/{id}', fn ($req, $res, $args) => $articleController->update($req, $res, $args));
-    $app->delete('/api/admin/articles/{id}', fn ($req, $res, $args) => $articleController->delete($req, $res, $args));
-    $app->get('/api/subscribers', fn ($req, $res) => $subscriberController->index($req, $res));
+    $app->get('/api/subscribers', fn ($req, $res) => $subscriberController->index($req, $res))->add($adminMiddleware);
     $app->get('/api/subscribers/by-email', fn ($req, $res) => $subscriberController->getByEmail($req, $res));
     $app->get('/api/subscribers/box', fn ($req, $res) => $subscriberController->getMyBox($req, $res));
     $app->post('/api/subscribers', fn ($req, $res) => $subscriberController->create($req, $res));
-    $app->get('/api/admin/campaigns', fn ($req, $res) => $campaignController->index($req, $res));
-    $app->post('/api/admin/campaigns', fn ($req, $res) => $campaignController->create($req, $res));
-    $app->post('/api/admin/campaigns/{id}/compose', fn ($req, $res, $args) => $campaignController->compose($req, $res, $args));
-    $app->get('/api/admin/campaigns/{id}/boxes', fn ($req, $res, $args) => $campaignController->boxes($req, $res, $args));
-    $app->post('/api/admin/boxes/{id}/validate', fn ($req, $res, $args) => $boxController->validate($req, $res, $args));
+
+    $app->group('/api/admin', function (RouteCollectorProxy $group) use (
+        $articleController,
+        $campaignController,
+        $boxController
+    ) {
+        $group->post('/articles', fn ($req, $res) => $articleController->create($req, $res));
+        $group->put('/articles/{id}', fn ($req, $res, $args) => $articleController->update($req, $res, $args));
+        $group->delete('/articles/{id}', fn ($req, $res, $args) => $articleController->delete($req, $res, $args));
+        $group->get('/campaigns', fn ($req, $res) => $campaignController->index($req, $res));
+        $group->post('/campaigns', fn ($req, $res) => $campaignController->create($req, $res));
+        $group->post('/campaigns/{id}/compose', fn ($req, $res, $args) => $campaignController->compose($req, $res, $args));
+        $group->get('/campaigns/{id}/boxes', fn ($req, $res, $args) => $campaignController->boxes($req, $res, $args));
+        $group->post('/boxes/{id}/validate', fn ($req, $res, $args) => $boxController->validate($req, $res, $args));
+    })->add($adminMiddleware);
 }
 
 $app->run();

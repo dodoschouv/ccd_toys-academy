@@ -32,11 +32,9 @@ INSERT IGNORE INTO `subscriber` (`id`, `last_name`, `first_name`, `email`, `chil
 ('s4', 'Petit', 'David', 'david.petit@example.com', 'EN', 'CON', 'EXT', 'SOC', 'FIG', 'LIV', 'EVL'),
 ('s5', 'Moreau', 'Emma', 'emma.moreau@example.com', 'PE', 'SOC', 'CON', 'FIG', 'EXT', 'LIV', 'EVL');
 
--- Utilisateurs d'exemple
+-- Utilisateurs d'exemple (admin : admin@mail.com / admin.admin)
 INSERT IGNORE INTO `user` (`email`, `first_name`, `last_name`, `password_hash`, `role`, `subscriber_id`) VALUES
-('admin@toysacademy.com', 'Admin', 'System', NULL, 'admin', NULL),
-('alice.dupont@example.com', 'Alice', 'Dupont', NULL, 'subscriber', 's1'),
-('bob.martin@example.com', 'Bob', 'Martin', NULL, 'subscriber', 's2');
+('admin@mail.com', 'admin', 'admin', '$2y$12$0puF/.tLX65z7mn8yCMLj.VB15yS6BN2hE6NRPpA//nC85mR.M3.i', 'admin', NULL);
 
 -- Campagnes d'exemple
 INSERT IGNORE INTO `campaign` (`max_weight_per_box`) VALUES

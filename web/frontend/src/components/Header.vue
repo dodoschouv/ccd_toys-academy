@@ -11,6 +11,7 @@ const userMenuOpen = ref(false)
 const userMenuRef = ref(null)
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
+const isAdmin = computed(() => authStore.user?.role === 'admin')
 const userLabel = computed(() => {
   const u = authStore.user
   if (!u) return ''
@@ -99,13 +100,14 @@ onUnmounted(() => {
             Ma box
           </RouterLink>
           <RouterLink
+            v-if="isAdmin"
             to="/back-office"
             :class="[
               'flex items-center gap-1.5 px-3 py-2 rounded-md font-medium transition-colors',
               isActive('/back-office') ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
             ]"
           >
-            <span class="material-symbols-outlined text-[20px]">settings</span>
+            <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
             Back-office
           </RouterLink>
           <!-- Connecté : menu utilisateur -->
@@ -124,7 +126,7 @@ onUnmounted(() => {
               class="absolute right-0 top-full mt-1 py-1 w-48 rounded-lg border border-slate-200 bg-white shadow-lg z-30"
             >
               <RouterLink
-                to="/connexion"
+                to="/profil"
                 @click="closeMenu"
                 class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
               >
@@ -204,6 +206,7 @@ onUnmounted(() => {
             Ma box
           </RouterLink>
           <RouterLink
+            v-if="isAdmin"
             to="/back-office"
             @click="closeMenu"
             :class="[
@@ -211,7 +214,7 @@ onUnmounted(() => {
               isActive('/back-office') ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'
             ]"
           >
-            <span class="material-symbols-outlined text-[22px]">settings</span>
+            <span class="material-symbols-outlined text-[22px]">admin_panel_settings</span>
             Back-office
           </RouterLink>
           <template v-if="isAuthenticated">
@@ -219,7 +222,7 @@ onUnmounted(() => {
               {{ userLabel }}
             </div>
             <RouterLink
-              to="/connexion"
+              to="/profil"
               @click="closeMenu"
               class="flex items-center gap-2 px-4 py-3 rounded-md font-medium text-slate-600 hover:bg-slate-50"
             >

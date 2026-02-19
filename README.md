@@ -90,6 +90,8 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | GET | `/api/admin/campaigns/{id}/boxes` | Liste des box composées de la campagne : par box : abonné, score, poids total, prix total, liste des articles (id, designation, category, age_range, state, price, weight) |
 | POST | `/api/admin/boxes/{id}/validate` | W16 — Valide une box individuellement : change le statut de "draft" à "validated", met à jour `validated_at`, vérifie que les articles ne sont pas déjà dans une autre box validée |
 
+**Accès admin** : les routes `/api/admin/*` et `GET /api/subscribers` exigent un JWT avec `role = admin`. Pour donner le rôle admin à un utilisateur existant : `UPDATE user SET role = 'admin' WHERE email = 'votre@email.fr';` (en base). Le lien « Back-office » dans la navbar et l’accès à `/back-office` sont réservés aux comptes admin.
+
 ---
 
 ## Structure
