@@ -34,13 +34,13 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | **W1** | Modèle de domaine : Article, Abonné, Box, Campagne (paramètres) | ✅ Fait (backend : Article, Subscriber, User ; BDD : article, subscriber, user. Box/Campagne en BDD retirés pour l’instant, à remettre avec l’optimisation) |
 | **W2** | Gestion articles (admin) : ajout d’un article (1) | ✅ Fait — `POST /api/admin/articles` |
 | **W3** | Catalogue : affichage paginé (10 par page) des articles disponibles (2) | ✅ Fait — `GET /api/articles?page=&per_page=` |
-| **W4** | Gestion abonnés : inscription avec tranche d’âge et préférences (6) ; cookie pour réutiliser les infos | ⚠️ Partiel — API `POST /api/subscribers` (création/mise à jour par email). Cookie côté front non fait |
+| **W4** | Gestion abonnés : inscription avec tranche d’âge et préférences (6) ; cookie pour réutiliser les infos | ✅ Fait — API `POST /api/subscribers` ; cookie `toys_academy_email` côté front après inscription ; pré-remplissage via `GET /api/subscribers/by-email?email=...` au chargement de la page Connexion/Inscription |
 | **W5** | Liste abonnés (admin) : affichage abonnés + tranche d’âge + préférences (7) | ✅ Fait — `GET /api/subscribers` |
 | **W6** | Campagne : paramétrage campagne (poids max par box) (9) | ✅ Fait — `GET /api/admin/campaigns`, `POST /api/admin/campaigns` (body : `max_weight_per_box`) |
 | **W7** | Composition : envoi des données à la brique d’optimisation + récupération des résultats (10) | ✅ Fait — `POST /api/admin/campaigns/{id}/compose` |
 | **W8** | Affichage des box composées (admin) : liste des articles par box, score, poids, prix (11) | ✅ Fait — `GET /api/admin/campaigns/{id}/boxes` |
 | **W9** | Consultation box abonné : voir sa box (validée) en renseignant son email (13) | ✅ Fait — `GET /api/subscribers/box?email=...` |
-| **W10** | Responsive : interfaces utilisables sur mobile (priorité back-office) | ❌ Non fait — à faire côté front |
+| **W10** | Responsive : interfaces utilisables sur mobile (priorité back-office) | ✅ Fait — navbar avec menu burger (mobile), back-office en colonne/grille adaptative, tableaux avec défilement horizontal, grilles catalogue/accueil responsives |
 | **W11** | Back-office : URL dédiée sans auth (pour le démo) | ⚠️ À faire côté front (route dédiée type `/back-office`) ; API admin existe sans auth |
 
 ### Avancé (après chaîne de base cohérente)
