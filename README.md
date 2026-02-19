@@ -46,7 +46,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | **W8** | Affichage des box composées (admin) : liste des articles par box, score, poids, prix (11) | ✅ Fait — `GET /api/admin/campaigns/{id}/boxes` |
 | **W9** | Consultation box abonné : voir sa box (validée) en renseignant son email (13) | ✅ Fait — `GET /api/subscribers/box?email=...` |
 | **W10** | Responsive : interfaces utilisables sur mobile (priorité back-office) | ✅ Fait — navbar avec menu burger (mobile), back-office en colonne/grille adaptative, tableaux avec défilement horizontal, grilles catalogue/accueil responsives |
-| **W11** | Back-office : URL dédiée sans auth (pour le démo) | ⚠️ À faire côté front (route dédiée type `/back-office`) ; API admin existe sans auth |
+| **W11** | Back-office : URL dédiée (accès réservé aux admins) | ✅ Fait — route `/back-office`, garde front + `AdminAuthMiddleware` sur `/api/admin/*` et `GET /api/subscribers` |
 
 ### Avancé (après chaîne de base cohérente)
 
