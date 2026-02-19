@@ -60,3 +60,29 @@ CREATE TABLE IF NOT EXISTS `campaign` (
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `box` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `campaign_id` INT UNSIGNED NOT NULL,
+  `subscriber_id` VARCHAR(50) NOT NULL,
+  `status` ENUM('draft','validated') NOT NULL DEFAULT 'draft',
+  `score` INT NOT NULL DEFAULT 0,
+  `total_weight` INT UNSIGNED NOT NULL DEFAULT 0,
+  `total_price` INT UNSIGNED NOT NULL DEFAULT 0,
+  `validated_at` DATETIME DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_box_campaign` (`campaign_id`),
+  KEY `idx_box_subscriber` (`subscriber_id`),
+  KEY `idx_box_status` (`status`),
+  CONSTRAINT `fk_box_campaign` FOREIGN KEY (`campaign_id`) REFERENCES `campaign` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_box_subscriber` FOREIGN KEY (`subscriber_id`) REFERENCES `subscriber` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `box_article` (
+  `box_id` INT UNSIGNED NOT NULL,
+  `article_id` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`box_id`, `article_id`),
+  CONSTRAINT `fk_box_article_box` FOREIGN KEY (`box_id`) REFERENCES `box` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_box_article_article` FOREIGN KEY (`article_id`) REFERENCES `article` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

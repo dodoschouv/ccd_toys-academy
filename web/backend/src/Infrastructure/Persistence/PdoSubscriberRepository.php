@@ -44,6 +44,14 @@ final class PdoSubscriberRepository implements SubscriberRepository
         return $row ? $this->rowToSubscriber($row) : null;
     }
 
+    public function findByFirstName(string $firstName): ?Subscriber
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM subscriber WHERE first_name = ? LIMIT 1');
+        $stmt->execute([$firstName]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $this->rowToSubscriber($row) : null;
+    }
+
     public function save(Subscriber $subscriber): void
     {
         $prefs = $this->preferencesToColumns($subscriber->preferences);

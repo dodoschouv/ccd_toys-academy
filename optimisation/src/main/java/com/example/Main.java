@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -55,63 +56,104 @@ public class Main {
                 os.write(body.getBytes(StandardCharsets.UTF_8));
             }
         });
+        server.createContext("/api/compute", exchange -> {
+            if (!"POST".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1);
+                return;
+            }
+            try {
+                String csvInput = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                chargerDonneesFromString(csvInput);
+                List<Box> resultat = optimiser();
+                int scoreFinal = calculerScoreTotal(resultat);
+                String csvOutput = compositionToCsvString(scoreFinal, resultat);
+                byte[] bytes = csvOutput.getBytes(StandardCharsets.UTF_8);
+                exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=utf-8");
+                exchange.sendResponseHeaders(200, bytes.length);
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(bytes);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                String msg = "Erreur: " + e.getMessage();
+                byte[] bytes = msg.getBytes(StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(500, bytes.length);
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(bytes);
+                }
+            }
+        });
         server.setExecutor(null);
         server.start();
-        System.out.println("Serveur optimisation démarré sur le port 80 (GET /api/health)");
+        System.out.println("Serveur optimisation démarré sur le port 80 (GET /api/health, POST /api/compute)");
     }
 
     public static void chargerDonnees(String fileName) {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            String mode = "";
-
-            while ((line = br.readLine()) != null) {
-                line = line.trim();
-                if (line.isEmpty()) continue;
-
-                if (line.toLowerCase().contains("articles")) {
-                    mode = "ARTICLES";
-                    continue;
-                } else if (line.toLowerCase().contains("abonnes")) {
-                    mode = "ABONNES";
-                    continue;
-                } else if (line.toLowerCase().contains("parametres")) {
-                    mode = "PARAMETRES";
-                    continue;
-                }
-
-                String[] columns = line.split(";");
-
-                switch (mode) {
-                    case "ARTICLES":
-                        Article art = new Article(
-                            columns[0], columns[1],
-                            Categorie.valueOf(columns[2].trim()),
-                            TrancheAge.valueOf(columns[3].trim()),
-                            Etat.valueOf(columns[4].trim()),
-                            Integer.parseInt(columns[5].trim()),
-                            Integer.parseInt(columns[6].trim())
-                        );
-                        catalogue.add(art);
-                        break;
-
-                    case "ABONNES":
-                        List<Categorie> prefs = new ArrayList<>();
-                        for (String cat : columns[3].split(",")) {
-                            prefs.add(Categorie.valueOf(cat.trim()));
-                        }
-                        Abonne ab = new Abonne(columns[0], columns[1], 
-                                               TrancheAge.valueOf(columns[2].trim()), prefs);
-                        abonnes.add(ab);
-                        break;
-
-                    case "PARAMETRES":
-                        maxPoids = Integer.parseInt(columns[0].trim());
-                        break;
-                }
-            }
+            chargerDonneesFromReader(br);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void chargerDonneesFromString(String csvContent) {
+        catalogue.clear();
+        abonnes.clear();
+        maxPoids = 0;
+        try (BufferedReader br = new BufferedReader(new StringReader(csvContent))) {
+            chargerDonneesFromReader(br);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void chargerDonneesFromReader(BufferedReader br) throws IOException {
+        String line;
+        String mode = "";
+        while ((line = br.readLine()) != null) {
+            line = line.trim();
+            if (line.isEmpty()) continue;
+
+            if (line.toLowerCase().contains("articles")) {
+                mode = "ARTICLES";
+                continue;
+            } else if (line.toLowerCase().contains("abonnes")) {
+                mode = "ABONNES";
+                continue;
+            } else if (line.toLowerCase().contains("parametres")) {
+                mode = "PARAMETRES";
+                continue;
+            }
+
+            String[] columns = line.split(";");
+
+            switch (mode) {
+                case "ARTICLES":
+                    Article art = new Article(
+                        columns[0], columns[1],
+                        Categorie.valueOf(columns[2].trim()),
+                        TrancheAge.valueOf(columns[3].trim()),
+                        Etat.valueOf(columns[4].trim()),
+                        Integer.parseInt(columns[5].trim()),
+                        Integer.parseInt(columns[6].trim())
+                    );
+                    catalogue.add(art);
+                    break;
+
+                case "ABONNES":
+                    List<Categorie> prefs = new ArrayList<>();
+                    for (String cat : columns[3].split(",")) {
+                        prefs.add(Categorie.valueOf(cat.trim()));
+                    }
+                    Abonne ab = new Abonne(columns[0], columns[1],
+                            TrancheAge.valueOf(columns[2].trim()), prefs);
+                    abonnes.add(ab);
+                    break;
+
+                case "PARAMETRES":
+                    maxPoids = Integer.parseInt(columns[0].trim());
+                    break;
+            }
         }
     }
     public static int calculerPointsArticle(Abonne abonne, Article article, int nbDejaPresentsMemeCategorie) {
@@ -212,25 +254,28 @@ public class Main {
 
     public static void sauverResultat(String fileName, int score, List<Box> boxes) {
         try (PrintWriter writer = new PrintWriter(new File(fileName))) {
-            writer.println(score);
-
-            for (Box box : boxes) {
-                String prenom = box.getAbonne().getPrenom();
-                for (Article art : box.getArticles()) {
-
-                    writer.println(String.format("%s;%s;%s;%s;%s",
-                        prenom,
-                        art.getId(),
-                        art.getCategorie(),
-                        art.getAge(),
-                        art.getEtat()
-                    ));
-                }
-            }
+            writer.print(compositionToCsvString(score, boxes));
             System.out.println("Fichier de sortie généré : " + fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String compositionToCsvString(int score, List<Box> boxes) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(score).append("\n");
+        for (Box box : boxes) {
+            String prenom = box.getAbonne().getPrenom();
+            for (Article art : box.getArticles()) {
+                sb.append(String.format("%s;%s;%s;%s;%s%n",
+                    prenom,
+                    art.getId(),
+                    art.getCategorie(),
+                    art.getAge(),
+                    art.getEtat()));
+            }
+        }
+        return sb.toString();
     }
 
     

@@ -11,15 +11,20 @@ use ToysAcademy\Application\ListArticles;
 use ToysAcademy\Application\ListCampaigns;
 use ToysAcademy\Application\ListSubscribers;
 use ToysAcademy\Application\Port\ArticleRepository;
+use ToysAcademy\Application\Port\BoxRepository;
 use ToysAcademy\Application\Port\CampaignRepository;
+use ToysAcademy\Application\Port\OptimisationService;
 use ToysAcademy\Application\Port\SubscriberRepository;
+use ToysAcademy\Application\RunComposition;
 use ToysAcademy\Application\SaveSubscriber;
 use ToysAcademy\Application\UpdateArticle;
 use ToysAcademy\Infrastructure\Http\ArticleController;
 use ToysAcademy\Infrastructure\Http\CampaignController;
+use ToysAcademy\Infrastructure\Http\HttpOptimisationService;
 use ToysAcademy\Infrastructure\Http\ReferenceController;
 use ToysAcademy\Infrastructure\Http\SubscriberController;
 use ToysAcademy\Infrastructure\Persistence\PdoArticleRepository;
+use ToysAcademy\Infrastructure\Persistence\PdoBoxRepository;
 use ToysAcademy\Infrastructure\Persistence\PdoCampaignRepository;
 use ToysAcademy\Infrastructure\Persistence\PdoSubscriberRepository;
 
@@ -61,6 +66,10 @@ if ($databaseUrl !== '') {
     $articleRepository = new PdoArticleRepository($pdo);
     $subscriberRepository = new PdoSubscriberRepository($pdo);
     $campaignRepository = new PdoCampaignRepository($pdo);
+    $boxRepository = new PdoBoxRepository($pdo);
+
+    $optimisationUrl = $_ENV['OPTIMIZATION_URL'] ?? 'http://optimisation:80';
+    $optimisationService = new HttpOptimisationService($optimisationUrl);
 
     $listArticles = new ListArticles($articleRepository);
     $listSubscribers = new ListSubscribers($subscriberRepository);
@@ -71,11 +80,12 @@ if ($databaseUrl !== '') {
     $saveSubscriber = new SaveSubscriber($subscriberRepository);
     $listCampaigns = new ListCampaigns($campaignRepository);
     $createCampaign = new CreateCampaign($campaignRepository);
+    $runComposition = new RunComposition($campaignRepository, $articleRepository, $subscriberRepository, $boxRepository, $optimisationService);
 
     $articleController = new ArticleController($listArticles, $articleRepository, $createArticle, $updateArticle, $deleteArticle);
     $referenceController = new ReferenceController($getReferenceData);
     $subscriberController = new SubscriberController($saveSubscriber, $listSubscribers, $subscriberRepository);
-    $campaignController = new CampaignController($listCampaigns, $createCampaign);
+    $campaignController = new CampaignController($listCampaigns, $createCampaign, $runComposition);
 
     $app->get('/api/reference', fn ($req, $res) => $referenceController->index($req, $res));
     $app->get('/api/articles', fn ($req, $res) => $articleController->index($req, $res));
@@ -88,6 +98,7 @@ if ($databaseUrl !== '') {
     $app->post('/api/subscribers', fn ($req, $res) => $subscriberController->create($req, $res));
     $app->get('/api/admin/campaigns', fn ($req, $res) => $campaignController->index($req, $res));
     $app->post('/api/admin/campaigns', fn ($req, $res) => $campaignController->create($req, $res));
+    $app->post('/api/admin/campaigns/{id}/compose', fn ($req, $res, $args) => $campaignController->compose($req, $res, $args));
 }
 
 $app->run();

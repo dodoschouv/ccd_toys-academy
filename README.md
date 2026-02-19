@@ -37,7 +37,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | **W4** | Gestion abonnés : inscription avec tranche d’âge et préférences (6) ; cookie pour réutiliser les infos | ⚠️ Partiel — API `POST /api/subscribers` (création/mise à jour par email). Cookie côté front non fait |
 | **W5** | Liste abonnés (admin) : affichage abonnés + tranche d’âge + préférences (7) | ✅ Fait — `GET /api/subscribers` |
 | **W6** | Campagne : paramétrage campagne (poids max par box) (9) | ✅ Fait — `GET /api/admin/campaigns`, `POST /api/admin/campaigns` (body : `max_weight_per_box`) |
-| **W7** | Composition : envoi des données à la brique d’optimisation + récupération des résultats (10) | ❌ Non fait |
+| **W7** | Composition : envoi des données à la brique d’optimisation + récupération des résultats (10) | ✅ Fait — `POST /api/admin/campaigns/{id}/compose` |
 | **W8** | Affichage des box composées (admin) : liste des articles par box, score, poids, prix (11) | ❌ Non fait |
 | **W9** | Consultation box abonné : voir sa box (validée) en renseignant son email (13) | ❌ Non fait |
 | **W10** | Responsive : interfaces utilisables sur mobile (priorité back-office) | ❌ Non fait — à faire côté front |
@@ -82,6 +82,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | POST | `/api/subscribers` | Inscription / mise à jour abonné (par email) |
 | GET | `/api/admin/campaigns` | Liste des campagnes |
 | POST | `/api/admin/campaigns` | Création campagne (body : `max_weight_per_box` en grammes) |
+| POST | `/api/admin/campaigns/{id}/compose` | Lance la composition (articles + abonnés + campagne) → optimisation → enregistrement des box en brouillon ; retourne `{ score, boxes_count }` |
 
 ---
 

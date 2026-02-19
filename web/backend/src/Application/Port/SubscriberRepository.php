@@ -15,6 +15,8 @@ interface SubscriberRepository
 
     public function findByEmail(string $email): ?Subscriber;
 
+    public function findByFirstName(string $firstName): ?Subscriber;
+
     public function save(Subscriber $subscriber): void;
 
     public function update(Subscriber $subscriber): void;
