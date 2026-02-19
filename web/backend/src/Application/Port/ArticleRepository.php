@@ -14,4 +14,8 @@ interface ArticleRepository
     public function getById(string $id): ?Article;
 
     public function save(Article $article): void;
+
+    public function update(Article $article): void;
+
+    public function delete(string $id): void;
 }
