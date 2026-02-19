@@ -4,8 +4,8 @@
 Application web de gestion d’articles et d’abonnés, avec composition de box optimisée.
 
 ## URL ##
-**Github** : https://github.com/dodoschouv/ccd_toys-academy
-**Application en live** : http://docketu.iutnc.univ-lorraine.fr:8082
+- **Github** : https://github.com/dodoschouv/ccd_toys-academy
+- **Application en live** : http://docketu.iutnc.univ-lorraine.fr:8082
 
 ## Liste des membres
 - CANDIDO DELLA MORA Léo (DACS)
