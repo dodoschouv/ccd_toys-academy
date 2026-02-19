@@ -7,6 +7,7 @@ use ToysAcademy\Application\CreateArticle;
 use ToysAcademy\Application\DeleteArticle;
 use ToysAcademy\Application\GetReferenceData;
 use ToysAcademy\Application\ListArticles;
+use ToysAcademy\Application\ListSubscribers;
 use ToysAcademy\Application\Port\ArticleRepository;
 use ToysAcademy\Application\Port\SubscriberRepository;
 use ToysAcademy\Application\SaveSubscriber;
@@ -56,6 +57,7 @@ if ($databaseUrl !== '') {
     $subscriberRepository = new PdoSubscriberRepository($pdo);
 
     $listArticles = new ListArticles($articleRepository);
+    $listSubscribers = new ListSubscribers($subscriberRepository);
     $createArticle = new CreateArticle($articleRepository);
     $updateArticle = new UpdateArticle($articleRepository);
     $deleteArticle = new DeleteArticle($articleRepository);
@@ -64,7 +66,7 @@ if ($databaseUrl !== '') {
 
     $articleController = new ArticleController($listArticles, $articleRepository, $createArticle, $updateArticle, $deleteArticle);
     $referenceController = new ReferenceController($getReferenceData);
-    $subscriberController = new SubscriberController($saveSubscriber);
+    $subscriberController = new SubscriberController($saveSubscriber, $listSubscribers);
 
     $app->get('/api/reference', fn ($req, $res) => $referenceController->index($req, $res));
     $app->get('/api/articles', fn ($req, $res) => $articleController->index($req, $res));
@@ -72,6 +74,7 @@ if ($databaseUrl !== '') {
     $app->post('/api/admin/articles', fn ($req, $res) => $articleController->create($req, $res));
     $app->put('/api/admin/articles/{id}', fn ($req, $res, $args) => $articleController->update($req, $res, $args));
     $app->delete('/api/admin/articles/{id}', fn ($req, $res, $args) => $articleController->delete($req, $res, $args));
+    $app->get('/api/subscribers', fn ($req, $res) => $subscriberController->index($req, $res));
     $app->post('/api/subscribers', fn ($req, $res) => $subscriberController->create($req, $res));
 }
 

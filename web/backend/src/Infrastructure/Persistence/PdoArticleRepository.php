@@ -27,6 +27,25 @@ final class PdoArticleRepository implements ArticleRepository
         return $result;
     }
 
+    /** @return array{items: Article[], total: int} */
+    public function findPaginated(int $page, int $perPage): array
+    {
+        $offset = ($page - 1) * $perPage;
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM article');
+        $stmt->execute();
+        $total = (int) $stmt->fetchColumn();
+        $stmt = $this->pdo->prepare('SELECT * FROM article ORDER BY created_at DESC LIMIT ? OFFSET ?');
+        $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $items = [];
+        foreach ($rows as $row) {
+            $items[] = $this->rowToArticle($row);
+        }
+        return ['items' => $items, 'total' => $total];
+    }
+
     public function getById(string $id): ?Article
     {
         $stmt = $this->pdo->prepare('SELECT * FROM article WHERE id = ?');
