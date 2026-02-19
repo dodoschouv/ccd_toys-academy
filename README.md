@@ -59,7 +59,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | **W16** | Validation des box (admin) : validation individuelle, retrait du stock, historique (12) | ✅ Fait — `POST /api/admin/boxes/{id}/validate` |
 | **W17** | Historique box d’un abonné (14) | ❌ Non fait |
 | **W18** | Historique global (admin) : campagnes, synthèse (15) | ❌ Non fait |
-| **W19** | Authentification : différencier abonné / gestionnaire (16) | ⚠️ Partiel — Connexion/inscription abonné avec JWT (POST `/api/auth/login`, `/api/auth/register`, GET `/api/auth/me`) ; token stocké côté front, envoyé en `Authorization: Bearer`. Pas encore de protection des routes admin par rôle |
+| **W19** | Authentification : différencier abonné / gestionnaire (16) | ✅ Fait — Connexion/inscription avec JWT ; rôle `admin` / `subscriber` ; routes `/api/admin/*` et `GET /api/subscribers` protégées par `AdminAuthMiddleware` ; accès `/back-office` réservé aux admins (garde front) |
 | **W20** | Tableau de bord (admin) : stats stock, abonnés actifs, score moyen (17) | ❌ Non fait |
 
 ### Super avancé (si temps)
