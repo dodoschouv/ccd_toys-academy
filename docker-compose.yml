@@ -49,6 +49,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./database/data.sql:/docker-entrypoint-initdb.d/02_data.sql:ro
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       start_period: 10s
@@ -62,9 +63,10 @@ services:
     image: mariadb:12
     entrypoint: ["/bin/sh", "-c"]
     command:
-      - "mariadb -h db -u toys -ptoys toys_academy < /schema.sql && echo Schema appliqué."
+      - "mariadb -h db -u toys -ptoys toys_academy < /schema.sql && mariadb -h db -u toys -ptoys toys_academy < /data.sql && echo Schema et données appliqués."
     volumes:
       - ./database/schema.sql:/schema.sql:ro
+      - ./database/data.sql:/data.sql:ro
     depends_on:
       db:
         condition: service_healthy
