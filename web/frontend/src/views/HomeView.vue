@@ -1,5 +1,4 @@
 <script setup>
-import { RouterLink } from 'vue-router'
 import logoImg from '../img/toysacademy.png'
 </script>
 
@@ -14,64 +13,38 @@ import logoImg from '../img/toysacademy.png'
       <h2 class="text-2xl font-semibold text-slate-800 tracking-tight mb-1">
         Bienvenue
       </h2>
-      <p class="text-slate-600 text-center">
-        Catalogue de jouets reconditionnés et box personnalisées
+      <p class="text-slate-600 text-center max-w-xl mx-auto mb-8">
+        Collecte, tri, nettoyage et revalorisation de dons de jeux, jouets et livres pour enfants. Revente à prix solidaires en boutique/e-shop. Ateliers parentalité et de sensibilisation à l'environnement avec de l'upcycling de jouets pour s'approprier l'anti-gaspi de façon ludique.
       </p>
     </section>
 
-    <nav class="grid grid-cols-1 sm:grid-cols-2 gap-4" aria-label="Navigation principale">
-      <RouterLink
-        to="/catalogue"
-        class="flex items-start gap-4 p-5 bg-white rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50/50 transition-colors text-left"
-      >
-        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600 material-symbols-outlined">
-          inventory_2
-        </span>
-        <div>
-          <span class="font-medium text-slate-800 block">Catalogue</span>
-          <span class="text-sm text-slate-500">Parcourir les articles disponibles</span>
-        </div>
-      </RouterLink>
-
-      <RouterLink
-        to="/ma-box"
-        class="flex items-start gap-4 p-5 bg-white rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50/50 transition-colors text-left"
-      >
-        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600 material-symbols-outlined">
-          card_giftcard
-        </span>
-        <div>
-          <span class="font-medium text-slate-800 block">Ma box</span>
-          <span class="text-sm text-slate-500">Consulter ma box validée</span>
-        </div>
-      </RouterLink>
-
-      <RouterLink
-        to="/connexion"
-        class="flex items-start gap-4 p-5 bg-white rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50/50 transition-colors text-left"
-      >
-        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600 material-symbols-outlined">
-          login
-        </span>
-        <div>
-          <span class="font-medium text-slate-800 block">Connexion / Inscription</span>
-          <span class="text-sm text-slate-500">Se connecter ou s'inscrire et gérer mes préférences</span>
-        </div>
-      </RouterLink>
-
-      <RouterLink
-        to="/back-office"
-        class="flex items-start gap-4 p-5 bg-white rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50/50 transition-colors text-left sm:col-span-2"
-      >
-        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-slate-100 text-slate-600 material-symbols-outlined">
-          settings
-        </span>
-        <div>
-          <span class="font-medium text-slate-800 block">Back-office</span>
-          <span class="text-sm text-slate-500">Gestion des campagnes, box, abonnés et articles</span>
-        </div>
-      </RouterLink>
-    </nav>
+    <section class="rounded-lg border border-slate-200 bg-white overflow-hidden">
+      <h3 class="text-lg font-semibold text-slate-800 px-6 py-4 border-b border-slate-100">
+        Où nous trouver ?
+      </h3>
+      <p class="px-6 py-2 text-slate-600">
+        74 Grande Rue<br>54700 Jezainville
+      </p>
+      <div class="w-full aspect-video">
+        <iframe
+          src="https://www.openstreetmap.org/export/embed.html?bbox=6.038%2C48.874%2C6.048%2C48.881&layer=mapnik&marker=48.877152%2C6.042376"
+          title="Carte : 74 Grande Rue, 54700 Jezainville"
+          class="w-full h-full border-0"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        />
+      </div>
+      <p class="px-6 py-3 text-sm">
+        <a
+          href="https://www.openstreetmap.org/?mlat=48.877152&amp;mlon=6.042376#map=17/48.877152/6.042376"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-slate-600 hover:text-slate-800 underline"
+        >
+          Ouvrir dans une fenêtre plus grande
+        </a>
+      </p>
+    </section>
   </div>
 </template>
 
