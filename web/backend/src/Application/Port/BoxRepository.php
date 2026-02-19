@@ -24,4 +24,10 @@ interface BoxRepository
 
     /** @return string[] Liste des IDs d'articles dans la box */
     public function getArticleIdsByBoxId(int $boxId): array;
+
+    /**
+     * Vérifie si un article est présent dans au moins une box validée.
+     * @return bool true si l'article est dans une box validée, false sinon
+     */
+    public function isArticleInValidatedBox(string $articleId): bool;
 }

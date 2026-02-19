@@ -94,6 +94,11 @@ final class ArticleController
         } catch (\InvalidArgumentException $e) {
             $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        } catch (\RuntimeException $e) {
+            $code = $e->getCode() ?: 403;
+            $statusCode = $code === 403 ? 403 : 500;
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
         }
         $response->getBody()->write(json_encode(['success' => true]));
         return $response->withHeader('Content-Type', 'application/json');

@@ -76,7 +76,7 @@ if ($databaseUrl !== '') {
     $listArticles = new ListArticles($articleRepository);
     $listSubscribers = new ListSubscribers($subscriberRepository);
     $createArticle = new CreateArticle($articleRepository);
-    $updateArticle = new UpdateArticle($articleRepository);
+    $updateArticle = new UpdateArticle($articleRepository, $boxRepository);
     $deleteArticle = new DeleteArticle($articleRepository);
     $getReferenceData = new GetReferenceData();
     $saveSubscriber = new SaveSubscriber($subscriberRepository);

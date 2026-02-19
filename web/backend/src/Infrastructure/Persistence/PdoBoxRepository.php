@@ -89,6 +89,17 @@ final class PdoBoxRepository implements BoxRepository
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
+    public function isArticleInValidatedBox(string $articleId): bool
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM box_article ba
+             INNER JOIN box b ON ba.box_id = b.id
+             WHERE ba.article_id = ? AND b.status = ?'
+        );
+        $stmt->execute([$articleId, Box::STATUS_VALIDATED]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
     private function rowToBox(array $row): Box
     {
         return new Box(

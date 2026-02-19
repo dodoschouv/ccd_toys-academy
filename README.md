@@ -48,7 +48,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | Ref | Description | Statut |
 |-----|-------------|--------|
 | **W12** | Filtrage catalogue : par catégorie, tranche d’âge, état (3) | ✅ Fait — `GET /api/articles?category=&age_range=&state=` |
-| **W13** | Modification d’un article (admin), pré-remplissage ; interdire si article dans une box validée (4) | ⚠️ Partiel — `PUT /api/admin/articles/{id}` en place ; pas de vérification « déjà dans box validée » |
+| **W13** | Modification d’un article (admin), pré-remplissage ; interdire si article dans une box validée (4) | ✅ Fait — `PUT /api/admin/articles/{id}` en place ; pas de vérification « déjà dans box validée » |
 | **W14** | Code-barre / QR : association à un article, recherche par scan/saisie (5) | ⚠️ Partiel — champ `barcode` en BDD et en API ; pas d’endpoint/recherche dédiée |
 | **W15** | Modification des préférences abonné (email pour retrouver le profil) (8) | ✅ Fait — `GET /api/subscribers/by-email?email=...` pour pré-remplir ; modification via `POST /api/subscribers` (mise à jour si email existe) |
 | **W16** | Validation des box (admin) : validation individuelle, retrait du stock, historique (12) | ❌ Non fait |
