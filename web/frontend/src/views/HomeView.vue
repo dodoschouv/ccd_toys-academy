@@ -47,7 +47,7 @@ async function copyUrl() {
 <template>
   <div class="max-w-6xl mx-auto px-4 py-10">
     <section class="flex flex-col sm:flex-row sm:items-center gap-10 sm:gap-16 mb-12 pt-6 min-h-[85vh]">
-      <div class="flex justify-center sm:justify-start shrink-0">
+      <div class="flex justify-center sm:justify-start shrink-0 hero-pop" style="animation-delay: 0s">
         <img
           :src="logoImg"
           alt="Toys Academy"
@@ -55,15 +55,16 @@ async function copyUrl() {
         />
       </div>
       <div class="flex flex-col items-center sm:items-start text-center sm:text-left flex-1 min-w-0">
-        <h2 class="text-3xl sm:text-5xl font-bold text-slate-800 tracking-tight mb-6">
+        <h2 class="text-3xl sm:text-5xl font-bold text-slate-800 tracking-tight mb-6 hero-pop" style="animation-delay: 0.1s">
           Bienvenue
         </h2>
-        <p class="text-slate-600 w-full max-w-none mb-10 text-base sm:text-lg leading-loose sm:leading-[1.8]">
+        <p class="text-slate-600 w-full max-w-none mb-10 text-base sm:text-lg leading-loose sm:leading-[1.8] hero-pop" style="animation-delay: 0.2s">
           Collecte, tri, nettoyage et revalorisation de dons de jeux, jouets et livres pour enfants. Revente à prix solidaires en boutique/e-shop. Ateliers parentalité et de sensibilisation à l'environnement avec de l'upcycling de jouets pour s'approprier l'anti-gaspi de façon ludique.
         </p>
         <a
           href="#ou-nous-trouver"
-          class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-900 text-white text-base font-medium hover:bg-blue-800 transition-colors shrink-0"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-900 text-white text-base font-medium hover:bg-blue-800 transition-colors shrink-0 hero-pop"
+          style="animation-delay: 0.35s"
         >
           <span class="material-symbols-outlined text-[20px]">location_on</span>
           Où nous trouver
@@ -72,7 +73,7 @@ async function copyUrl() {
     </section>
 
     <!-- Carte & Adresse -->
-    <section id="ou-nous-trouver" class="mx-4 sm:mx-auto sm:max-w-4xl scroll-mt-6">
+    <section id="ou-nous-trouver" class="mx-4 sm:mx-auto sm:max-w-4xl scroll-mt-6 hero-pop" style="animation-delay: 0.5s">
       <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div class="bg-slate-50/80 px-6 py-4 border-b border-slate-100 flex flex-wrap items-center gap-3">
           <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-200/80 text-slate-800">
@@ -169,6 +170,21 @@ async function copyUrl() {
 </template>
 
 <style scoped>
+@keyframes heroPop {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.hero-pop {
+  animation: heroPop 0.5s ease-out forwards;
+  opacity: 0;
+}
+
 @keyframes flying {
   0%, 100% {
     transform: translateY(0) translateX(0) rotate(-1deg);
