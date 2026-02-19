@@ -74,7 +74,7 @@ if ($databaseUrl !== '') {
 
     $articleController = new ArticleController($listArticles, $articleRepository, $createArticle, $updateArticle, $deleteArticle);
     $referenceController = new ReferenceController($getReferenceData);
-    $subscriberController = new SubscriberController($saveSubscriber, $listSubscribers);
+    $subscriberController = new SubscriberController($saveSubscriber, $listSubscribers, $subscriberRepository);
     $campaignController = new CampaignController($listCampaigns, $createCampaign);
 
     $app->get('/api/reference', fn ($req, $res) => $referenceController->index($req, $res));
@@ -84,6 +84,7 @@ if ($databaseUrl !== '') {
     $app->put('/api/admin/articles/{id}', fn ($req, $res, $args) => $articleController->update($req, $res, $args));
     $app->delete('/api/admin/articles/{id}', fn ($req, $res, $args) => $articleController->delete($req, $res, $args));
     $app->get('/api/subscribers', fn ($req, $res) => $subscriberController->index($req, $res));
+    $app->get('/api/subscribers/by-email', fn ($req, $res) => $subscriberController->getByEmail($req, $res));
     $app->post('/api/subscribers', fn ($req, $res) => $subscriberController->create($req, $res));
     $app->get('/api/admin/campaigns', fn ($req, $res) => $campaignController->index($req, $res));
     $app->post('/api/admin/campaigns', fn ($req, $res) => $campaignController->create($req, $res));

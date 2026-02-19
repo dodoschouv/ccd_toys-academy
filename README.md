@@ -50,7 +50,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | **W12** | Filtrage catalogue : par catégorie, tranche d’âge, état (3) | ✅ Fait — `GET /api/articles?category=&age_range=&state=` |
 | **W13** | Modification d’un article (admin), pré-remplissage ; interdire si article dans une box validée (4) | ⚠️ Partiel — `PUT /api/admin/articles/{id}` en place ; pas de vérification « déjà dans box validée » |
 | **W14** | Code-barre / QR : association à un article, recherche par scan/saisie (5) | ⚠️ Partiel — champ `barcode` en BDD et en API ; pas d’endpoint/recherche dédiée |
-| **W15** | Modification des préférences abonné (email pour retrouver le profil) (8) | ❌ Non fait — pas de `PUT/PATCH` abonné par email |
+| **W15** | Modification des préférences abonné (email pour retrouver le profil) (8) | ✅ Fait — `GET /api/subscribers/by-email?email=...` pour pré-remplir ; modification via `POST /api/subscribers` (mise à jour si email existe) |
 | **W16** | Validation des box (admin) : validation individuelle, retrait du stock, historique (12) | ❌ Non fait |
 | **W17** | Historique box d’un abonné (14) | ❌ Non fait |
 | **W18** | Historique global (admin) : campagnes, synthèse (15) | ❌ Non fait |
@@ -78,6 +78,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | PUT | `/api/admin/articles/{id}` | Modification article |
 | DELETE | `/api/admin/articles/{id}` | Suppression article |
 | GET | `/api/subscribers` | Liste abonnés (admin) |
+| GET | `/api/subscribers/by-email` | Récupérer un abonné par email (query : `email`) — pour pré-remplir le formulaire de modification |
 | POST | `/api/subscribers` | Inscription / mise à jour abonné (par email) |
 | GET | `/api/admin/campaigns` | Liste des campagnes |
 | POST | `/api/admin/campaigns` | Création campagne (body : `max_weight_per_box` en grammes) |

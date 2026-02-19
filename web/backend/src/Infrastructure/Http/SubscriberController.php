@@ -7,6 +7,7 @@ namespace ToysAcademy\Infrastructure\Http;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ToysAcademy\Application\ListSubscribers;
+use ToysAcademy\Application\Port\SubscriberRepository;
 use ToysAcademy\Application\SaveSubscriber;
 use ToysAcademy\Domain\Subscriber;
 
@@ -15,7 +16,33 @@ final class SubscriberController
     public function __construct(
         private SaveSubscriber $saveSubscriber,
         private ListSubscribers $listSubscribers,
+        private SubscriberRepository $subscriberRepository,
     ) {
+    }
+
+    public function getByEmail(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $params = $request->getQueryParams();
+        $email = isset($params['email']) ? trim((string) $params['email']) : '';
+        if ($email === '') {
+            $response->getBody()->write(json_encode(['error' => 'Paramètre email requis']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+        $subscriber = $this->subscriberRepository->findByEmail($email);
+        if ($subscriber === null) {
+            $response->getBody()->write(json_encode(['error' => 'Aucun abonné avec cet email']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+        $data = [
+            'id' => $subscriber->id,
+            'first_name' => $subscriber->firstName,
+            'last_name' => $subscriber->lastName,
+            'email' => $subscriber->email,
+            'child_age_range' => $subscriber->childAgeRange,
+            'preferences' => $subscriber->preferences,
+        ];
+        $response->getBody()->write(json_encode($data));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
