@@ -28,6 +28,7 @@ use ToysAcademy\Infrastructure\Http\AdminAuthMiddleware;
 use ToysAcademy\Infrastructure\Http\AuthController;
 use ToysAcademy\Infrastructure\Http\BoxController;
 use ToysAcademy\Infrastructure\Http\CampaignController;
+use ToysAcademy\Infrastructure\Http\DashboardController;
 use ToysAcademy\Infrastructure\Http\HttpOptimisationService;
 use ToysAcademy\Infrastructure\Http\ReferenceController;
 use ToysAcademy\Infrastructure\Http\SubscriberController;
@@ -101,6 +102,7 @@ if ($databaseUrl !== '') {
     $campaignController = new CampaignController($listCampaigns, $createCampaign, $runComposition, $listBoxesForCampaign);
     $boxController = new BoxController($validateBox);
     $authController = new AuthController($userRepository, $subscriberRepository, $saveSubscriber);
+    $dashboardController = new DashboardController($pdo);
 
     $app->post('/api/auth/login', fn ($req, $res) => $authController->login($req, $res));
     $app->post('/api/auth/register', fn ($req, $res) => $authController->register($req, $res));
@@ -119,8 +121,10 @@ if ($databaseUrl !== '') {
     $app->group('/api/admin', function (RouteCollectorProxy $group) use (
         $articleController,
         $campaignController,
-        $boxController
+        $boxController,
+        $dashboardController
     ) {
+        $group->get('/dashboard', fn ($req, $res) => $dashboardController->stats($req, $res));
         $group->post('/articles', fn ($req, $res) => $articleController->create($req, $res));
         $group->put('/articles/{id}', fn ($req, $res, $args) => $articleController->update($req, $res, $args));
         $group->delete('/articles/{id}', fn ($req, $res, $args) => $articleController->delete($req, $res, $args));

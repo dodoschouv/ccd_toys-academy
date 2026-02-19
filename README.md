@@ -60,7 +60,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | **W17** | Historique box d’un abonné (14) | ❌ Non fait |
 | **W18** | Historique global (admin) : campagnes, synthèse (15) | ❌ Non fait |
 | **W19** | Authentification : différencier abonné / gestionnaire (16) | ✅ Fait — Connexion/inscription avec JWT ; rôle `admin` / `subscriber` ; routes `/api/admin/*` et `GET /api/subscribers` protégées par `AdminAuthMiddleware` ; accès `/back-office` réservé aux admins (garde front) |
-| **W20** | Tableau de bord (admin) : stats stock, abonnés actifs, score moyen (17) | ❌ Non fait |
+| **W20** | Tableau de bord (admin) : stats stock, abonnés actifs, score moyen (17) | ✅ Fait — Dashboard dans la navbar (admins), route `/back-office/dashboard`, `GET /api/admin/dashboard` (stock, subscribers_count, average_score), liste des abonnés intégrée |
 
 ### Super avancé (si temps)
 
@@ -89,13 +89,14 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | GET | `/api/subscribers/by-email` | Récupérer un abonné par email (query : `email`) — pour pré-remplir le formulaire de modification |
 | GET | `/api/subscribers/box` | W9 — Box validées de l'abonné (query : `email`) : liste des box avec score, poids, prix, articles ; 404 si email inconnu |
 | POST | `/api/subscribers` | Inscription / mise à jour abonné (par email) |
+| GET | `/api/admin/dashboard` | W20 — Stats tableau de bord : `{ stock, subscribers_count, average_score }` |
 | GET | `/api/admin/campaigns` | Liste des campagnes |
 | POST | `/api/admin/campaigns` | Création campagne (body : `max_weight_per_box` en grammes) |
 | POST | `/api/admin/campaigns/{id}/compose` | Lance la composition (articles + abonnés + campagne) → optimisation → enregistrement des box en brouillon ; retourne `{ score, boxes_count }` |
 | GET | `/api/admin/campaigns/{id}/boxes` | Liste des box composées de la campagne : par box : abonné, score, poids total, prix total, liste des articles (id, designation, category, age_range, state, price, weight) |
 | POST | `/api/admin/boxes/{id}/validate` | W16 — Valide une box individuellement : change le statut de "draft" à "validated", met à jour `validated_at`, vérifie que les articles ne sont pas déjà dans une autre box validée |
 
-**Accès admin** : les routes `/api/admin/*` et `GET /api/subscribers` exigent un JWT avec `role = admin`. Pour donner le rôle admin à un utilisateur existant : `UPDATE user SET role = 'admin' WHERE email = 'votre@email.fr';` (en base). Le lien « Back-office » dans la navbar et l’accès à `/back-office` sont réservés aux comptes admin.
+**Accès admin** : les routes `/api/admin/*` et `GET /api/subscribers` exigent un JWT avec `role = admin`. Pour donner le rôle admin à un utilisateur existant : `UPDATE user SET role = 'admin' WHERE email = 'votre@email.fr';` (en base). Le lien « Dashboard » dans la navbar et l’accès à `/back-office` sont réservés aux comptes admin.
 
 ---
 

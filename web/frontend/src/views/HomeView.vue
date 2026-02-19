@@ -15,7 +15,7 @@ import logoImg from '../img/toysacademy.png'
         Bienvenue
       </h2>
       <p class="text-slate-600 text-center">
-        Toys Academy — catalogue de jouets reconditionnés et box personnalisées.
+        Catalogue de jouets reconditionnés et box personnalisées
       </p>
     </section>
 

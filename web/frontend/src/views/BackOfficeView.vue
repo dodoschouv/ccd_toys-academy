@@ -4,6 +4,7 @@ import { RouterLink, useRoute } from 'vue-router'
 const route = useRoute()
 
 const links = [
+  { to: '/back-office/dashboard', label: 'Dashboard', icon: 'dashboard' },
   { to: '/back-office/campaigns', label: 'Campagnes', icon: 'campaign' },
   { to: '/back-office/subscribers', label: 'Abonnés', icon: 'group' },
   { to: '/back-office/articles', label: 'Articles', icon: 'inventory_2' },

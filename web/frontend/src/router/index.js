@@ -7,6 +7,7 @@ import ConnexionView from '../views/ConnexionView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import SettingsView from '../views/SettingsView.vue'
 import BackOfficeView from '../views/BackOfficeView.vue'
+import DashboardView from '../views/back-office/DashboardView.vue'
 import CampaignsView from '../views/back-office/CampaignsView.vue'
 import SubscribersView from '../views/back-office/SubscribersView.vue'
 import ArticlesView from '../views/back-office/ArticlesView.vue'
@@ -25,9 +26,11 @@ const router = createRouter({
     { path: '/login', redirect: '/connexion' },
     {
       path: '/back-office',
+      redirect: '/back-office/dashboard',
       component: BackOfficeView,
       children: [
-        { path: 'addarticle', name: 'add-article', component: AddArticleView,},
+        { path: 'dashboard', name: 'back-office-dashboard', component: DashboardView },
+        { path: 'addarticle', name: 'add-article', component: AddArticleView },
         { path: 'campaigns', name: 'back-office-campaigns', component: CampaignsView },
         { path: 'subscribers', name: 'back-office-subscribers', component: SubscribersView },
         { path: 'articles', name: 'back-office-articles', component: ArticlesView },

@@ -145,10 +145,10 @@ onMounted(() => {
               {{ formatCategory(article.category) }}
             </span>
             <span class="px-2 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded">
-              Âge: {{ article.age_range }}
+              Âge : {{ article.age_range }}
             </span>
             <span class="px-2 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded">
-              État: {{ article.state }}
+              État : {{ article.state }}
             </span>
           </div>
 

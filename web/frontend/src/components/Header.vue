@@ -101,14 +101,14 @@ onUnmounted(() => {
           </RouterLink>
           <RouterLink
             v-if="isAdmin"
-            to="/back-office"
+            to="/back-office/dashboard"
             :class="[
               'flex items-center gap-1.5 px-3 py-2 rounded-md font-medium transition-colors',
               isActive('/back-office') ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
             ]"
           >
-            <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
-            Back-office
+            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+            Dashboard
           </RouterLink>
           <!-- Connecté : menu utilisateur -->
           <div v-if="isAuthenticated" ref="userMenuRef" class="relative">
@@ -207,15 +207,15 @@ onUnmounted(() => {
           </RouterLink>
           <RouterLink
             v-if="isAdmin"
-            to="/back-office"
+            to="/back-office/dashboard"
             @click="closeMenu"
             :class="[
               'flex items-center gap-2 px-4 py-3 rounded-md font-medium transition-colors',
               isActive('/back-office') ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'
             ]"
           >
-            <span class="material-symbols-outlined text-[22px]">admin_panel_settings</span>
-            Back-office
+            <span class="material-symbols-outlined text-[22px]">dashboard</span>
+            Dashboard
           </RouterLink>
           <template v-if="isAuthenticated">
             <div class="px-4 py-2 text-xs font-medium text-slate-500 border-t border-slate-100 mt-2 pt-3">
