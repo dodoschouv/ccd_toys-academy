@@ -36,7 +36,7 @@ onMounted(() => {
       <section class="pt-4 border-t border-slate-200">
         <h3 class="text-lg font-medium text-slate-800 mb-2">Sécurité</h3>
         <p class="text-sm text-slate-600">
-          Changer le mot de passe sera disponible prochainement.
+          Nous n'implémenterons pas cette fonctionalité.
         </p>
       </section>
     </div>
