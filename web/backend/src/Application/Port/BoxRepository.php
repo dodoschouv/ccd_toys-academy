@@ -30,4 +30,15 @@ interface BoxRepository
      * @return bool true si l'article est dans une box validée, false sinon
      */
     public function isArticleInValidatedBox(string $articleId): bool;
+
+    /**
+     * Met à jour le statut d'une box et sa date de validation.
+     */
+    public function updateStatus(int $boxId, string $status, ?string $validatedAt = null): void;
+
+    /**
+     * Vérifie si un article est présent dans une box validée autre que celle spécifiée.
+     * @return bool true si l'article est dans une autre box validée, false sinon
+     */
+    public function isArticleInAnotherValidatedBox(string $articleId, int $excludeBoxId): bool;
 }

@@ -51,7 +51,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | **W13** | Modification d’un article (admin), pré-remplissage ; interdire si article dans une box validée (4) | ✅ Fait — `PUT /api/admin/articles/{id}` en place ; pas de vérification « déjà dans box validée » |
 | **W14** | Code-barre / QR : association à un article, recherche par scan/saisie (5) | ⚠️ Partiel — champ `barcode` en BDD et en API ; pas d’endpoint/recherche dédiée |
 | **W15** | Modification des préférences abonné (email pour retrouver le profil) (8) | ✅ Fait — `GET /api/subscribers/by-email?email=...` pour pré-remplir ; modification via `POST /api/subscribers` (mise à jour si email existe) |
-| **W16** | Validation des box (admin) : validation individuelle, retrait du stock, historique (12) | ❌ Non fait |
+| **W16** | Validation des box (admin) : validation individuelle, retrait du stock, historique (12) | ✅ Fait — `POST /api/admin/boxes/{id}/validate` |
 | **W17** | Historique box d’un abonné (14) | ❌ Non fait |
 | **W18** | Historique global (admin) : campagnes, synthèse (15) | ❌ Non fait |
 | **W19** | Authentification : différencier abonné / gestionnaire (16) | ❌ Non fait |
@@ -85,6 +85,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | POST | `/api/admin/campaigns` | Création campagne (body : `max_weight_per_box` en grammes) |
 | POST | `/api/admin/campaigns/{id}/compose` | Lance la composition (articles + abonnés + campagne) → optimisation → enregistrement des box en brouillon ; retourne `{ score, boxes_count }` |
 | GET | `/api/admin/campaigns/{id}/boxes` | Liste des box composées de la campagne : par box : abonné, score, poids total, prix total, liste des articles (id, designation, category, age_range, state, price, weight) |
+| POST | `/api/admin/boxes/{id}/validate` | W16 — Valide une box individuellement : change le statut de "draft" à "validated", met à jour `validated_at`, vérifie que les articles ne sont pas déjà dans une autre box validée |
 
 ---
 

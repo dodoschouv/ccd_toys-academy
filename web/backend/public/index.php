@@ -20,7 +20,9 @@ use ToysAcademy\Application\Port\SubscriberRepository;
 use ToysAcademy\Application\RunComposition;
 use ToysAcademy\Application\SaveSubscriber;
 use ToysAcademy\Application\UpdateArticle;
+use ToysAcademy\Application\ValidateBox;
 use ToysAcademy\Infrastructure\Http\ArticleController;
+use ToysAcademy\Infrastructure\Http\BoxController;
 use ToysAcademy\Infrastructure\Http\CampaignController;
 use ToysAcademy\Infrastructure\Http\HttpOptimisationService;
 use ToysAcademy\Infrastructure\Http\ReferenceController;
@@ -85,11 +87,13 @@ if ($databaseUrl !== '') {
     $runComposition = new RunComposition($campaignRepository, $articleRepository, $subscriberRepository, $boxRepository, $optimisationService);
     $listBoxesForCampaign = new ListBoxesForCampaign($campaignRepository, $boxRepository, $articleRepository, $subscriberRepository);
     $getValidatedBoxesForSubscriberByEmail = new GetValidatedBoxesForSubscriberByEmail($subscriberRepository, $boxRepository, $articleRepository);
+    $validateBox = new ValidateBox($boxRepository);
 
     $articleController = new ArticleController($listArticles, $articleRepository, $createArticle, $updateArticle, $deleteArticle);
     $referenceController = new ReferenceController($getReferenceData);
     $subscriberController = new SubscriberController($saveSubscriber, $listSubscribers, $subscriberRepository, $getValidatedBoxesForSubscriberByEmail);
     $campaignController = new CampaignController($listCampaigns, $createCampaign, $runComposition, $listBoxesForCampaign);
+    $boxController = new BoxController($validateBox);
 
     $app->get('/api/reference', fn ($req, $res) => $referenceController->index($req, $res));
     $app->get('/api/articles', fn ($req, $res) => $articleController->index($req, $res));
@@ -105,6 +109,7 @@ if ($databaseUrl !== '') {
     $app->post('/api/admin/campaigns', fn ($req, $res) => $campaignController->create($req, $res));
     $app->post('/api/admin/campaigns/{id}/compose', fn ($req, $res, $args) => $campaignController->compose($req, $res, $args));
     $app->get('/api/admin/campaigns/{id}/boxes', fn ($req, $res, $args) => $campaignController->boxes($req, $res, $args));
+    $app->post('/api/admin/boxes/{id}/validate', fn ($req, $res, $args) => $boxController->validate($req, $res, $args));
 }
 
 $app->run();
