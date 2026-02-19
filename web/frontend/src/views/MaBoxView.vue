@@ -51,11 +51,18 @@ const categoriesMap = {
 }
 const ageMap = { BB: '0-3 ans', PE: '3-6 ans', EN: '6-10 ans', AD: '10+ ans' }
 const stateMap = { N: 'Neuf', TB: 'Très bon état', B: 'Bon état' }
+
+function formatDate(val) {
+  if (!val) return '—'
+  const d = new Date(val)
+  return Number.isNaN(d.getTime()) ? val : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+}
 </script>
 
 <template>
   <div class="max-w-3xl mx-auto px-4 py-8">
-    <h2 class="text-xl font-semibold text-slate-800 mb-6">Ma box</h2>
+    <h2 class="text-xl font-semibold text-slate-800 mb-1">Historique de mes box</h2>
+    <p class="text-sm text-slate-500 mb-6">Liste des box précédemment reçues, avec le détail des articles.</p>
 
     <div class="mb-8">
       <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Adresse email</label>
@@ -74,7 +81,7 @@ const stateMap = { N: 'Neuf', TB: 'Très bon état', B: 'Bon état' }
           class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
           @click="fetchBox"
         >
-          Voir ma box
+          Voir l'historique
         </button>
       </div>
       <p v-if="error" class="mt-2 text-sm text-red-600">{{ error }}</p>
@@ -85,14 +92,18 @@ const stateMap = { N: 'Neuf', TB: 'Très bon état', B: 'Bon état' }
     </div>
 
     <template v-else-if="boxes.length > 0">
-      <p class="text-sm text-slate-600 mb-4">{{ boxes.length }} box validée(s) trouvée(s).</p>
+      <p class="text-sm text-slate-600 mb-4">{{ boxes.length }} box reçue(s).</p>
       <div class="space-y-6">
         <section
           v-for="box in boxes"
           :key="box.id"
           class="rounded-lg border border-slate-200 bg-white p-5"
         >
-          <div class="flex flex-wrap gap-4 text-sm text-slate-600 border-b border-slate-100 pb-4 mb-4">
+          <div class="flex flex-wrap items-center gap-3 border-b border-slate-100 pb-4 mb-4">
+            <span class="font-medium text-slate-800">Box reçue le {{ formatDate(box.validated_at) }}</span>
+            <span v-if="box.campaign_id" class="text-xs text-slate-500">Campagne #{{ box.campaign_id }}</span>
+          </div>
+          <div class="flex flex-wrap gap-4 text-sm text-slate-600 mb-4">
             <span>Score : <strong class="text-slate-800">{{ box.score }}</strong></span>
             <span>Poids : <strong class="text-slate-800">{{ box.total_weight }} g</strong></span>
             <span>Prix : <strong class="text-slate-800">{{ box.total_price }} €</strong></span>
@@ -113,7 +124,7 @@ const stateMap = { N: 'Neuf', TB: 'Très bon état', B: 'Bon état' }
     </template>
 
     <p v-else-if="!loading && email && boxes.length === 0 && !error" class="text-sm text-slate-500">
-      Aucune box validée pour cet email.
+      Aucune box reçue pour cet email.
     </p>
   </div>
 </template>

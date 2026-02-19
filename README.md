@@ -57,7 +57,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | **W14** | Code-barre / QR : association à un article, recherche par scan/saisie (5) | ⚠️ Partiel — champ `barcode` en BDD et en API ; pas d’endpoint/recherche dédiée |
 | **W15** | Modification des préférences abonné (email pour retrouver le profil) (8) | ✅ Fait — `GET /api/subscribers/by-email?email=...` pour pré-remplir ; modification via `POST /api/subscribers` (mise à jour si email existe) |
 | **W16** | Validation des box (admin) : validation individuelle, retrait du stock, historique (12) | ✅ Fait — `POST /api/admin/boxes/{id}/validate` |
-| **W17** | Historique box d’un abonné (14) | ❌ Non fait |
+| **W17** | Historique box d'un abonné (14) | ✅ Fait — Page « Ma box » = historique : liste des box validées par email (GET `/api/subscribers/box?email=`), date de réception et détail des articles par box |
 | **W18** | Historique global (admin) : campagnes, synthèse (15) | ❌ Non fait |
 | **W19** | Authentification : différencier abonné / gestionnaire (16) | ✅ Fait — Connexion/inscription avec JWT ; rôle `admin` / `subscriber` ; routes `/api/admin/*` et `GET /api/subscribers` protégées par `AdminAuthMiddleware` ; accès `/back-office` réservé aux admins (garde front) |
 | **W20** | Tableau de bord (admin) : stats stock, abonnés actifs, score moyen (17) | ✅ Fait — Dashboard dans la navbar (admins), route `/back-office/dashboard`, `GET /api/admin/dashboard` (stock, subscribers_count, average_score), liste des abonnés intégrée |
