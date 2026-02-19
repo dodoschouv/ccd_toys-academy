@@ -1,10 +1,15 @@
 package com.example;
 
+import com.sun.net.httpserver.HttpServer;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +19,13 @@ public class Main {
     private static int maxPoids = 0;
     private static final int[] POINTS_PREFERENCE = {10, 8, 6, 4, 2, 1};
 
-    public static void main(String[] args) {
-        String cheminFichier = "optimisation/exemple.csv";
+    public static void main(String[] args) throws IOException {
+        if (args.length == 0) {
+            demarrerServeur();
+            return;
+        }
+        String cheminFichier = args.length >= 1 ? args[0] : "exemple.csv";
+        String sortie = args.length >= 2 ? args[1] : "sortie_composition.csv";
         chargerDonnees(cheminFichier);
 
         List<Box> resultat = optimiser();
@@ -28,7 +38,26 @@ public class Main {
         System.out.println("----------------------------");
         System.out.println("SCORE DE LA COMPOSITION : " + scoreFinal);
 
-        sauverResultat("sortie_composition.csv", scoreFinal, resultat);
+        sauverResultat(sortie, scoreFinal, resultat);
+    }
+
+    private static void demarrerServeur() throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress(80), 0);
+        server.createContext("/api/health", exchange -> {
+            if (!"GET".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1);
+                return;
+            }
+            String body = "{\"status\":\"ok\",\"service\":\"optimization\"}";
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, body.getBytes(StandardCharsets.UTF_8).length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(body.getBytes(StandardCharsets.UTF_8));
+            }
+        });
+        server.setExecutor(null);
+        server.start();
+        System.out.println("Serveur optimisation démarré sur le port 80 (GET /api/health)");
     }
 
     public static void chargerDonnees(String fileName) {

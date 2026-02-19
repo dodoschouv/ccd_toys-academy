@@ -1,5 +1,6 @@
-vendor
+target
 .git
 .gitignore
-.md
+*.md
 .env
+sortie_composition.csv
