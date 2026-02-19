@@ -100,6 +100,25 @@ final class PdoBoxRepository implements BoxRepository
         return (int) $stmt->fetchColumn() > 0;
     }
 
+    public function updateStatus(int $boxId, string $status, ?string $validatedAt = null): void
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE box SET status = ?, validated_at = ? WHERE id = ?'
+        );
+        $stmt->execute([$status, $validatedAt, $boxId]);
+    }
+
+    public function isArticleInAnotherValidatedBox(string $articleId, int $excludeBoxId): bool
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM box_article ba
+             INNER JOIN box b ON ba.box_id = b.id
+             WHERE ba.article_id = ? AND b.status = ? AND b.id != ?'
+        );
+        $stmt->execute([$articleId, Box::STATUS_VALIDATED, $excludeBoxId]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
     private function rowToBox(array $row): Box
     {
         return new Box(
