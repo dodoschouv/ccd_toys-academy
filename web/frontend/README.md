@@ -2,6 +2,9 @@
 
 Interface Vue 3 pour le catalogue, l’inscription, la consultation des box et le back-office admin.
 
+## Tutoriel
+Pour consulter le tutoriel de l'application : [TUTORIEL.md](TUTORIEL.md).
+
 ## Stack
 
 - Vue 3
