@@ -12,6 +12,7 @@ import CampaignsView from '../views/back-office/CampaignsView.vue'
 import SubscribersView from '../views/back-office/SubscribersView.vue'
 import ArticlesView from '../views/back-office/ArticlesView.vue'
 import AddArticleView from '../views/back-office/AddArticleView.vue'
+import HistoryView from '../views/back-office/HistoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,7 @@ const router = createRouter({
         { path: 'dashboard', name: 'back-office-dashboard', component: DashboardView },
         { path: 'addarticle', name: 'add-article', component: AddArticleView },
         { path: 'campaigns', name: 'back-office-campaigns', component: CampaignsView },
+        { path: 'history', name: 'back-office-history', component: HistoryView },
         { path: 'subscribers', name: 'back-office-subscribers', component: SubscribersView },
         { path: 'articles', name: 'back-office-articles', component: ArticlesView },
       ],

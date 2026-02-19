@@ -58,7 +58,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | **W15** | Modification des préférences abonné (email pour retrouver le profil) (8) | ✅ Fait — `GET /api/subscribers/by-email?email=...` pour pré-remplir ; modification via `POST /api/subscribers` (mise à jour si email existe) |
 | **W16** | Validation des box (admin) : validation individuelle, retrait du stock, historique (12) | ✅ Fait — `POST /api/admin/boxes/{id}/validate` |
 | **W17** | Historique box d'un abonné (14) | ✅ Fait — Page « Ma box » = historique : liste des box validées par email (GET `/api/subscribers/box?email=`), date de réception et détail des articles par box |
-| **W18** | Historique global (admin) : campagnes, synthèse (15) | ❌ Non fait |
+| **W18** | Historique global (admin) : campagnes, synthèse (15) | ✅ Fait — Page back-office « Historique », `GET /api/admin/history` : liste des campagnes avec nb box validées, nb articles distribués, score moyen |
 | **W19** | Authentification : différencier abonné / gestionnaire (16) | ✅ Fait — Connexion/inscription avec JWT ; rôle `admin` / `subscriber` ; routes `/api/admin/*` et `GET /api/subscribers` protégées par `AdminAuthMiddleware` ; accès `/back-office` réservé aux admins (garde front) |
 | **W20** | Tableau de bord (admin) : stats stock, abonnés actifs, score moyen (17) | ✅ Fait — Dashboard dans la navbar (admins), route `/back-office/dashboard`, `GET /api/admin/dashboard` (stock, subscribers_count, average_score), liste des abonnés intégrée |
 
@@ -90,6 +90,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 | GET | `/api/subscribers/box` | W9 — Box validées de l'abonné (query : `email`) : liste des box avec score, poids, prix, articles ; 404 si email inconnu |
 | POST | `/api/subscribers` | Inscription / mise à jour abonné (par email) |
 | GET | `/api/admin/dashboard` | W20 — Stats tableau de bord : `{ stock, subscribers_count, average_score }` |
+| GET | `/api/admin/history` | W18 — Historique global : campagnes avec `boxes_count`, `articles_count`, `average_score` (box validées) |
 | GET | `/api/admin/campaigns` | Liste des campagnes |
 | POST | `/api/admin/campaigns` | Création campagne (body : `max_weight_per_box` en grammes) |
 | POST | `/api/admin/campaigns/{id}/compose` | Lance la composition (articles + abonnés + campagne) → optimisation → enregistrement des box en brouillon ; retourne `{ score, boxes_count }` |
