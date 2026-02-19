@@ -166,3 +166,7 @@ optimisation/
 --- 
 ## Routes
 Pour consulter les routes API : [ROUTES.md](ROUTES.md).
+
+# User
+- email : admin@mail.com
+- mdp : admin.admin
