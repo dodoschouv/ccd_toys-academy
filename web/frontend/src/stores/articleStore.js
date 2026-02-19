@@ -2,6 +2,10 @@
 import { defineStore } from 'pinia'
 import api from '../api/index.js'
 
+const articlesPath = import.meta.env.VITE_API_URL ? '/articles' : '/api/articles'
+const referencePath = import.meta.env.VITE_API_URL ? '/reference' : '/api/reference'
+const adminArticlesPath = import.meta.env.VITE_API_URL ? '/admin/articles' : '/api/admin/articles'
+
 export const useArticleStore = defineStore('article', {
     state: () => ({
         articles: [],
@@ -9,7 +13,11 @@ export const useArticleStore = defineStore('article', {
         loading: false,
         currentPage: 1,
         itemsPerPage: 10,
-        // Nouvelles variables pour les listes déroulantes
+        filters: {
+            category: null,
+            age_range: null,
+            state: null
+        },
         references: {
             categories: {},
             age_ranges: {},
@@ -19,72 +27,65 @@ export const useArticleStore = defineStore('article', {
 
     actions: {
         async fetchArticles(page = 1, perPage = 10, filters = null) {
-            this.loading = true;
-            const f = filters ?? this.filters;
-            if (filters) this.filters = f;
+            this.loading = true
+            const f = filters ?? this.filters
+            if (filters) this.filters = { ...this.filters, ...filters }
             try {
-                const response = await api.get('/articles', {
-                    params: { page, per_page: perPage } // Attention, ton back utilise per_page
-                });
-                this.articles = response.data.data;
-                this.total = response.data.total;
-                const params = { page, per_page: perPage };
-                if (f.category) params.category = f.category;
-                if (f.age_range) params.age_range = f.age_range;
-                if (f.state) params.state = f.state;
+                const params = { page, per_page: perPage }
+                if (f.category) params.category = f.category
+                if (f.age_range) params.age_range = f.age_range
+                if (f.state) params.state = f.state
 
-                this.articles = response.data.data ?? [];
-                this.total = response.data.total ?? 0;
-                this.currentPage = page;
-                this.itemsPerPage = perPage;
+                const response = await api.get(articlesPath, { params })
+                this.articles = response.data.data ?? []
+                this.total = response.data.total ?? 0
+                this.currentPage = page
+                this.itemsPerPage = perPage
             } catch (error) {
-                console.error('Erreur fetchArticles:', error);
+                console.error('Erreur fetchArticles:', error)
+                this.articles = []
+                this.total = 0
             } finally {
-                this.loading = false;
+                this.loading = false
             }
         },
 
         changePage(newPage) {
-            this.fetchArticles(newPage, this.itemsPerPage);
+            this.fetchArticles(newPage, this.itemsPerPage)
         },
 
         setFilters(newFilters) {
-            this.filters = { ...this.filters, ...newFilters };
-            this.fetchArticles(1, this.itemsPerPage, this.filters);
+            this.filters = { ...this.filters, ...newFilters }
+            this.fetchArticles(1, this.itemsPerPage, this.filters)
         },
 
         resetFilters() {
-            this.filters = { category: null, age_range: null, state: null };
-            this.fetchArticles(1, this.itemsPerPage, this.filters);
+            this.filters = { category: null, age_range: null, state: null }
+            this.fetchArticles(1, this.itemsPerPage, this.filters)
         },
 
         setItemsPerPage(perPage) {
-            this.fetchArticles(1, perPage, this.filters);
+            this.fetchArticles(1, perPage, this.filters)
         },
 
-        // --- NOUVELLES ACTIONS ---
-
-        // 1. Récupérer les données de référence pour le formulaire
         async fetchReferences() {
             try {
-                const response = await api.get('/reference');
-                this.references = response.data;
+                const response = await api.get(referencePath)
+                this.references = response.data ?? this.references
             } catch (error) {
-                console.error('Erreur lors de la récupération des références:', error);
+                console.error('Erreur lors de la récupération des références:', error)
             }
         },
 
-        // 2. Ajouter un article
         async addArticle(articleData) {
             try {
-                await api.post('/admin/articles', articleData);
-                // Si ça marche, on recharge la page 1 du catalogue pour voir le nouvel article
-                await this.fetchArticles(1, this.itemsPerPage);
-                return true;
+                await api.post(adminArticlesPath, articleData)
+                await this.fetchArticles(1, this.itemsPerPage, this.filters)
+                return true
             } catch (error) {
-                console.error('Erreur lors de l\'ajout de l\'article:', error);
-                throw error; // On renvoie l'erreur pour l'afficher dans le composant
+                console.error('Erreur lors de l\'ajout de l\'article:', error)
+                throw error
             }
         }
     }
-});
+})
