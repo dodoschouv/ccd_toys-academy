@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 use Slim\Factory\AppFactory;
 use ToysAcademy\Application\CreateArticle;
+use ToysAcademy\Application\CreateCampaign;
 use ToysAcademy\Application\DeleteArticle;
 use ToysAcademy\Application\GetReferenceData;
 use ToysAcademy\Application\ListArticles;
+use ToysAcademy\Application\ListCampaigns;
 use ToysAcademy\Application\ListSubscribers;
 use ToysAcademy\Application\Port\ArticleRepository;
+use ToysAcademy\Application\Port\CampaignRepository;
 use ToysAcademy\Application\Port\SubscriberRepository;
 use ToysAcademy\Application\SaveSubscriber;
 use ToysAcademy\Application\UpdateArticle;
 use ToysAcademy\Infrastructure\Http\ArticleController;
+use ToysAcademy\Infrastructure\Http\CampaignController;
 use ToysAcademy\Infrastructure\Http\ReferenceController;
 use ToysAcademy\Infrastructure\Http\SubscriberController;
 use ToysAcademy\Infrastructure\Persistence\PdoArticleRepository;
+use ToysAcademy\Infrastructure\Persistence\PdoCampaignRepository;
 use ToysAcademy\Infrastructure\Persistence\PdoSubscriberRepository;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
@@ -55,6 +60,7 @@ if ($databaseUrl !== '') {
 
     $articleRepository = new PdoArticleRepository($pdo);
     $subscriberRepository = new PdoSubscriberRepository($pdo);
+    $campaignRepository = new PdoCampaignRepository($pdo);
 
     $listArticles = new ListArticles($articleRepository);
     $listSubscribers = new ListSubscribers($subscriberRepository);
@@ -63,10 +69,13 @@ if ($databaseUrl !== '') {
     $deleteArticle = new DeleteArticle($articleRepository);
     $getReferenceData = new GetReferenceData();
     $saveSubscriber = new SaveSubscriber($subscriberRepository);
+    $listCampaigns = new ListCampaigns($campaignRepository);
+    $createCampaign = new CreateCampaign($campaignRepository);
 
     $articleController = new ArticleController($listArticles, $articleRepository, $createArticle, $updateArticle, $deleteArticle);
     $referenceController = new ReferenceController($getReferenceData);
     $subscriberController = new SubscriberController($saveSubscriber, $listSubscribers);
+    $campaignController = new CampaignController($listCampaigns, $createCampaign);
 
     $app->get('/api/reference', fn ($req, $res) => $referenceController->index($req, $res));
     $app->get('/api/articles', fn ($req, $res) => $articleController->index($req, $res));
@@ -76,6 +85,8 @@ if ($databaseUrl !== '') {
     $app->delete('/api/admin/articles/{id}', fn ($req, $res, $args) => $articleController->delete($req, $res, $args));
     $app->get('/api/subscribers', fn ($req, $res) => $subscriberController->index($req, $res));
     $app->post('/api/subscribers', fn ($req, $res) => $subscriberController->create($req, $res));
+    $app->get('/api/admin/campaigns', fn ($req, $res) => $campaignController->index($req, $res));
+    $app->post('/api/admin/campaigns', fn ($req, $res) => $campaignController->create($req, $res));
 }
 
 $app->run();

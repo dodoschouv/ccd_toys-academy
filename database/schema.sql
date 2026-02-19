@@ -53,3 +53,10 @@ CREATE TABLE IF NOT EXISTS `user` (
   KEY `idx_user_subscriber` (`subscriber_id`),
   CONSTRAINT `fk_user_subscriber` FOREIGN KEY (`subscriber_id`) REFERENCES `subscriber` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `campaign` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `max_weight_per_box` INT UNSIGNED NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
