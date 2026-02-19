@@ -1,0 +1,93 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# docker-compose.prod.yml — Configuration de production
+#
+# DIFFÉRENCES AVEC docker-compose.yml (dev) :
+#   ✅ Utilise les images pré-buildées depuis ghcr.io (pas de build local)
+#   ✅ restart: unless-stopped sur tous les services
+#   ✅ Port 3306 (MariaDB) NON exposé à l'extérieur
+#   ✅ Service adminer supprimé
+#   ✅ Secrets via variables d'environnement (.env) — ne jamais hardcoder
+#
+# UTILISATION :
+#   1) Copier .env.example → .env et remplir les valeurs
+#   2) docker compose -f docker-compose.prod.yml up -d
+# ──────────────────────────────────────────────────────────────────────────────
+
+services:
+  web-backend:
+    image: ghcr.io/${GITHUB_REPOSITORY}/backend:latest
+    restart: unless-stopped
+    expose:
+      - "80"
+    environment:
+      - DATABASE_URL=mysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}
+      - OPTIMIZATION_URL=http://optimisation:80
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:8080}
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    networks:
+      - toys-net
+
+  web-frontend:
+    image: ghcr.io/${GITHUB_REPOSITORY}/frontend:latest
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - web-backend
+    networks:
+      - toys-net
+
+  optimisation:
+    image: ghcr.io/${GITHUB_REPOSITORY}/optimisation:latest
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - toys-net
+
+  db:
+    image: mariadb:12
+    restart: unless-stopped
+    environment:
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    # ⚠️ Port 3306 NON exposé en prod — la BDD n'est accessible que depuis le réseau interne
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./database/data.sql:/docker-entrypoint-initdb.d/02_data.sql:ro
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      start_period: 15s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - toys-net
+
+  db-init:
+    image: mariadb:12
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - "mariadb -h db -u ${DB_USER} -p${DB_PASSWORD} ${DB_NAME} < /schema.sql && mariadb -h db -u ${DB_USER} -p${DB_PASSWORD} ${DB_NAME} < /data.sql && echo 'Schema et données appliqués.'"
+    volumes:
+      - ./database/schema.sql:/schema.sql:ro
+      - ./database/data.sql:/data.sql:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - toys-net
+    restart: "no"
+
+volumes:
+  db_data:
+
+
+networks:
+  toys-net:
+    driver: bridge
