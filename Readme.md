@@ -14,7 +14,6 @@ Application web de gestion d’articles et d’abonnés, avec composition de box
 - Delaborde Baptiste (DWM-2)
 - EVA Maxence (IL-2)
 
-
 ## Stack
 
 - **Frontend** : Vue 3 + Vite + Tailwind CSS 4 (nginx)
@@ -160,3 +159,6 @@ optimisation/
 ├── pom.xml
 └── Dockerfile
 ```
+--- 
+## Routes
+Pour consulter les routes API : [ROUTES.md](ROUTES.md).

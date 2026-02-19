@@ -67,4 +67,4 @@ java -jar target/optimisation-1.0-SNAPSHOT.jar exemple.csv sortie.csv
 
 ## Lien avec le backend
 
-Le backend PHP envoie le CSV en **POST** vers `{OPTIMIZATION_URL}/api/compute`, parse la réponse et crée les box en base. En Docker : `OPTIMIZATION_URL=http://optimisation:80`.
+Le backend PHP envoie le CSV en **POST** vers `{OPTIMISATION_URL}/api/compute`, parse la réponse et crée les box en base. En Docker : `OPTIMISATION_URL=http://optimisation:80`.
