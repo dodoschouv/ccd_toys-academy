@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS `subscriber` (
 CREATE TABLE IF NOT EXISTS `user` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(255) NOT NULL,
+  `first_name` VARCHAR(50) NOT NULL,
+  `last_name` VARCHAR(50) NOT NULL,
   `password_hash` VARCHAR(255) DEFAULT NULL,
   `role` ENUM('admin','subscriber') NOT NULL DEFAULT 'subscriber',
   `subscriber_id` VARCHAR(50) DEFAULT NULL,
