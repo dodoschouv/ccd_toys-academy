@@ -1,14 +1,20 @@
 <script setup>
 import { RouterLink } from 'vue-router'
+import logoImg from '../img/toysacademy.png'
 </script>
 
 <template>
   <div class="max-w-4xl mx-auto px-4 py-10">
-    <section class="mb-12">
+    <section class="flex flex-col items-center justify-center mb-12 pt-6">
+      <img
+        :src="logoImg"
+        alt="Toys Academy"
+        class="h-40 w-auto object-contain logo-flying mb-6"
+      />
       <h2 class="text-2xl font-semibold text-slate-800 tracking-tight mb-1">
         Bienvenue
       </h2>
-      <p class="text-slate-600">
+      <p class="text-slate-600 text-center">
         Toys Academy — catalogue de jouets reconditionnés et box personnalisées.
       </p>
     </section>
@@ -68,3 +74,23 @@ import { RouterLink } from 'vue-router'
     </nav>
   </div>
 </template>
+
+<style scoped>
+@keyframes flying {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(-1deg);
+  }
+  25% {
+    transform: translateY(-8px) translateX(4px) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-4px) translateX(-3px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-10px) translateX(2px) rotate(0.5deg);
+  }
+}
+.logo-flying {
+  animation: flying 4s ease-in-out infinite;
+}
+</style>

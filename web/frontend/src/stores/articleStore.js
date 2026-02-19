@@ -1,3 +1,4 @@
+// src/stores/articleStore.js
 import { defineStore } from 'pinia'
 import api from '../api/index.js'
 
@@ -17,14 +18,23 @@ export const useArticleStore = defineStore('article', {
     }),
 
     actions: {
-        async fetchArticles(page = 1, perPage = 10) {
+        async fetchArticles(page = 1, perPage = 10, filters = null) {
             this.loading = true;
+            const f = filters ?? this.filters;
+            if (filters) this.filters = f;
             try {
                 const response = await api.get('/articles', {
                     params: { page, per_page: perPage } // Attention, ton back utilise per_page
                 });
                 this.articles = response.data.data;
                 this.total = response.data.total;
+                const params = { page, per_page: perPage };
+                if (f.category) params.category = f.category;
+                if (f.age_range) params.age_range = f.age_range;
+                if (f.state) params.state = f.state;
+
+                this.articles = response.data.data ?? [];
+                this.total = response.data.total ?? 0;
                 this.currentPage = page;
                 this.itemsPerPage = perPage;
             } catch (error) {
@@ -36,6 +46,20 @@ export const useArticleStore = defineStore('article', {
 
         changePage(newPage) {
             this.fetchArticles(newPage, this.itemsPerPage);
+        },
+
+        setFilters(newFilters) {
+            this.filters = { ...this.filters, ...newFilters };
+            this.fetchArticles(1, this.itemsPerPage, this.filters);
+        },
+
+        resetFilters() {
+            this.filters = { category: null, age_range: null, state: null };
+            this.fetchArticles(1, this.itemsPerPage, this.filters);
+        },
+
+        setItemsPerPage(perPage) {
+            this.fetchArticles(1, perPage, this.filters);
         },
 
         // --- NOUVELLES ACTIONS ---

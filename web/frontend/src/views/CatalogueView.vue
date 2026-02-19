@@ -1,41 +1,57 @@
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useArticleStore } from '../stores/articleStore'
 
 const articleStore = useArticleStore()
-// On récupère toutes les infos du store de manière réactive
-const { articles, total, loading, currentPage, itemsPerPage } = storeToRefs(articleStore)
+const { articles, total, loading, currentPage, itemsPerPage, filters } = storeToRefs(articleStore)
 
 const categoriesMap = {
-  'SOC': 'Jeux de société',
-  'FIG': 'Figurines / Poupées',
-  'CON': 'Construction',
-  'EXT': 'Extérieur',
-  'EVL': 'Éveil / Éducatif',
-  'LIV': 'Livres'
+  SOC: 'Jeux de société',
+  FIG: 'Figurines / Poupées',
+  CON: 'Construction',
+  EXT: 'Extérieur',
+  EVL: 'Éveil / Éducatif',
+  LIV: 'Livres'
 }
+const statesMap = { N: 'Neuf', TB: 'Très bon état', B: 'Bon état' }
 
 const formatCategory = (code) => categoriesMap[code] || code
 
 const totalPages = computed(() => {
-  if (itemsPerPage.value === 0) return 1;
-  return Math.ceil(total.value / itemsPerPage.value);
+  if (itemsPerPage.value === 0) return 1
+  return Math.ceil(total.value / itemsPerPage.value)
 })
 
 const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    articleStore.changePage(currentPage.value + 1)
-  }
+  if (currentPage.value < totalPages.value) articleStore.changePage(currentPage.value + 1)
 }
-
 const prevPage = () => {
-  if (currentPage.value > 1) {
-    articleStore.changePage(currentPage.value - 1)
-  }
+  if (currentPage.value > 1) articleStore.changePage(currentPage.value - 1)
 }
 
-// Au chargement du composant, on demande la page 1
+const perPageOptions = [10, 20, 30]
+const localCategory = ref(null)
+const localState = ref(null)
+const localAgeRange = ref('')
+
+const applyFilters = () => {
+  articleStore.setFilters({
+    category: localCategory.value || null,
+    state: localState.value || null,
+    age_range: localAgeRange.value.trim() || null
+  })
+}
+const resetFilters = () => {
+  localCategory.value = null
+  localState.value = null
+  localAgeRange.value = ''
+  articleStore.resetFilters()
+}
+const hasActiveFilters = computed(() =>
+  !!localCategory.value || !!localState.value || !!localAgeRange.value.trim()
+)
+
 onMounted(() => {
   articleStore.fetchArticles(1, 10)
 })
@@ -43,11 +59,70 @@ onMounted(() => {
 
 <template>
   <div class="max-w-7xl mx-auto p-4">
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
       <h2 class="text-2xl font-bold text-slate-800">Catalogue des articles</h2>
       <span class="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full">
         {{ total }} articles au total
       </span>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-4 mb-6 flex flex-wrap items-end gap-3">
+      <div class="flex flex-wrap gap-3 items-end">
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">Catégorie</label>
+          <select
+            v-model="localCategory"
+            class="rounded-lg border border-slate-300 px-3 py-2 text-sm min-w-[180px] bg-white"
+          >
+            <option :value="null">Toutes</option>
+            <option v-for="(label, code) in categoriesMap" :key="code" :value="code">{{ label }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">État</label>
+          <select
+            v-model="localState"
+            class="rounded-lg border border-slate-300 px-3 py-2 text-sm min-w-[160px] bg-white"
+          >
+            <option :value="null">Tous</option>
+            <option v-for="(label, code) in statesMap" :key="code" :value="code">{{ label }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">Tranche d'âge</label>
+          <input
+            v-model="localAgeRange"
+            type="text"
+            placeholder="ex: 3-5"
+            class="rounded-lg border border-slate-300 px-3 py-2 text-sm w-28 bg-white"
+          />
+        </div>
+        <button
+          type="button"
+          @click="applyFilters"
+          class="px-4 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium hover:bg-slate-700 transition-colors"
+        >
+          Appliquer
+        </button>
+        <button
+          v-if="hasActiveFilters"
+          type="button"
+          @click="resetFilters"
+          class="px-4 py-2 rounded-lg border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors"
+        >
+          Réinitialiser
+        </button>
+      </div>
+      <div class="ml-auto flex items-center gap-2">
+        <label class="text-sm text-slate-600">Par page</label>
+        <select
+          :value="itemsPerPage"
+          @change="articleStore.setItemsPerPage(Number($event.target.value))"
+          class="rounded-lg border border-slate-300 px-2 py-1.5 text-sm bg-white"
+        >
+          <option v-for="n in perPageOptions" :key="n" :value="n">{{ n }}</option>
+        </select>
+      </div>
     </div>
 
     <div v-if="loading" class="flex justify-center py-10">
