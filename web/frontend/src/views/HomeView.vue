@@ -18,32 +18,41 @@ import logoImg from '../img/toysacademy.png'
       </p>
     </section>
 
-    <section class="rounded-lg border border-slate-200 bg-white overflow-hidden">
-      <h3 class="text-lg font-semibold text-slate-800 px-6 py-4 border-b border-slate-100">
-        Où nous trouver ?
-      </h3>
-      <p class="px-6 py-2 text-slate-600">
-        74 Grande Rue<br>54700 Jezainville
-      </p>
-      <div class="w-full aspect-video">
-        <iframe
-          src="https://www.openstreetmap.org/export/embed.html?bbox=6.038%2C48.874%2C6.048%2C48.881&layer=mapnik&marker=48.877152%2C6.042376"
-          title="Carte : 74 Grande Rue, 54700 Jezainville"
-          class="w-full h-full border-0"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-        />
+    <!-- Carte & Adresse -->
+    <section class="mx-4 sm:mx-auto sm:max-w-4xl">
+      <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        <div class="bg-slate-50/80 px-6 py-4 border-b border-slate-100 flex flex-wrap items-center gap-3">
+          <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-200/80 text-slate-800">
+            <span class="material-symbols-outlined text-[24px]">location_on</span>
+          </span>
+          <div>
+            <h2 class="text-lg font-semibold text-slate-800">Où nous trouver ?</h2>
+            <p class="text-sm text-slate-600">
+              74 Grande Rue · 54700 Jezainville
+            </p>
+          </div>
+        </div>
+        <div class="w-full aspect-video min-h-[240px] bg-slate-100">
+          <iframe
+            src="https://www.openstreetmap.org/export/embed.html?bbox=6.038%2C48.874%2C6.048%2C48.881&layer=mapnik&marker=48.877152%2C6.042376"
+            title="Carte : 74 Grande Rue, 54700 Jezainville"
+            class="w-full h-full border-0"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          />
+        </div>
+        <div class="px-6 py-3 border-t border-slate-100">
+          <a
+            href="https://www.openstreetmap.org/?mlat=48.877152&amp;mlon=6.042376#map=17/48.877152/6.042376"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 text-sm text-amber-700 hover:text-amber-800 font-medium"
+          >
+            <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+            Ouvrir la carte en grand
+          </a>
+        </div>
       </div>
-      <p class="px-6 py-3 text-sm">
-        <a
-          href="https://www.openstreetmap.org/?mlat=48.877152&amp;mlon=6.042376#map=17/48.877152/6.042376"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-slate-600 hover:text-slate-800 underline"
-        >
-          Ouvrir dans une fenêtre plus grande
-        </a>
-      </p>
     </section>
   </div>
 </template>
@@ -54,13 +63,13 @@ import logoImg from '../img/toysacademy.png'
     transform: translateY(0) translateX(0) rotate(-1deg);
   }
   25% {
-    transform: translateY(-8px) translateX(4px) rotate(1deg);
+    transform: translateY(-6px) translateX(3px) rotate(1deg);
   }
   50% {
-    transform: translateY(-4px) translateX(-3px) rotate(0deg);
+    transform: translateY(-3px) translateX(-2px) rotate(0deg);
   }
   75% {
-    transform: translateY(-10px) translateX(2px) rotate(0.5deg);
+    transform: translateY(-8px) translateX(2px) rotate(0.5deg);
   }
 }
 .logo-flying {
