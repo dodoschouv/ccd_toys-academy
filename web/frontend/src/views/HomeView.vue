@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink } from 'vue-router'
 import logoImg from '../img/toysacademy.png'
 </script>
 
@@ -52,6 +53,15 @@ import logoImg from '../img/toysacademy.png'
             Ouvrir la carte en grand
           </a>
         </div>
+      </div>
+      <div class="mt-6 flex justify-center">
+        <RouterLink
+          to="/information"
+          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm font-medium hover:bg-slate-50 hover:border-slate-400 transition-colors"
+        >
+          <span class="material-symbols-outlined text-[20px]">info</span>
+          Information
+        </RouterLink>
       </div>
     </section>
   </div>

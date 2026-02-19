@@ -13,6 +13,7 @@ import SubscribersView from '../views/back-office/SubscribersView.vue'
 import ArticlesView from '../views/back-office/ArticlesView.vue'
 import AddArticleView from '../views/back-office/AddArticleView.vue'
 import HistoryView from '../views/back-office/HistoryView.vue'
+import InformationView from '../views/InformationView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,6 +26,7 @@ const router = createRouter({
     { path: '/profil', name: 'profil', component: ProfileView },
     { path: '/settings', name: 'settings', component: SettingsView },
     { path: '/login', redirect: '/connexion' },
+    { path: '/information', name: 'information', component: InformationView },
     {
       path: '/back-office',
       redirect: '/back-office/dashboard',
