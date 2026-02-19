@@ -51,6 +51,27 @@ final class PdoArticleRepository implements ArticleRepository
         ]);
     }
 
+    public function update(Article $article): void
+    {
+        $sql = 'UPDATE article SET designation = ?, category = ?, age_range = ?, state = ?, price = ?, weight = ?, barcode = ?
+                WHERE id = ?';
+        $this->pdo->prepare($sql)->execute([
+            $article->designation,
+            $article->category,
+            $article->ageRange,
+            $article->state,
+            $article->price,
+            $article->weight,
+            $article->barcode,
+            $article->id,
+        ]);
+    }
+
+    public function delete(string $id): void
+    {
+        $this->pdo->prepare('DELETE FROM article WHERE id = ?')->execute([$id]);
+    }
+
     private function rowToArticle(array $row): Article
     {
         return new Article(

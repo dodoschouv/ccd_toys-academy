@@ -3,10 +3,19 @@
 declare(strict_types=1);
 
 use Slim\Factory\AppFactory;
+use ToysAcademy\Application\CreateArticle;
+use ToysAcademy\Application\DeleteArticle;
+use ToysAcademy\Application\GetReferenceData;
 use ToysAcademy\Application\ListArticles;
 use ToysAcademy\Application\Port\ArticleRepository;
+use ToysAcademy\Application\Port\SubscriberRepository;
+use ToysAcademy\Application\SaveSubscriber;
+use ToysAcademy\Application\UpdateArticle;
 use ToysAcademy\Infrastructure\Http\ArticleController;
+use ToysAcademy\Infrastructure\Http\ReferenceController;
+use ToysAcademy\Infrastructure\Http\SubscriberController;
 use ToysAcademy\Infrastructure\Persistence\PdoArticleRepository;
+use ToysAcademy\Infrastructure\Persistence\PdoSubscriberRepository;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -42,10 +51,28 @@ if ($databaseUrl !== '') {
     );
     $pdo = new PDO($dsn, $parsed['user'] ?? '', $parsed['pass'] ?? '');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $articleRepository = new PdoArticleRepository($pdo);
+    $subscriberRepository = new PdoSubscriberRepository($pdo);
+
     $listArticles = new ListArticles($articleRepository);
-    $articleController = new ArticleController($listArticles);
+    $createArticle = new CreateArticle($articleRepository);
+    $updateArticle = new UpdateArticle($articleRepository);
+    $deleteArticle = new DeleteArticle($articleRepository);
+    $getReferenceData = new GetReferenceData();
+    $saveSubscriber = new SaveSubscriber($subscriberRepository);
+
+    $articleController = new ArticleController($listArticles, $articleRepository, $createArticle, $updateArticle, $deleteArticle);
+    $referenceController = new ReferenceController($getReferenceData);
+    $subscriberController = new SubscriberController($saveSubscriber);
+
+    $app->get('/api/reference', fn ($req, $res) => $referenceController->index($req, $res));
     $app->get('/api/articles', fn ($req, $res) => $articleController->index($req, $res));
+    $app->get('/api/articles/{id}', fn ($req, $res, $args) => $articleController->show($req, $res, $args));
+    $app->post('/api/admin/articles', fn ($req, $res) => $articleController->create($req, $res));
+    $app->put('/api/admin/articles/{id}', fn ($req, $res, $args) => $articleController->update($req, $res, $args));
+    $app->delete('/api/admin/articles/{id}', fn ($req, $res, $args) => $articleController->delete($req, $res, $args));
+    $app->post('/api/subscribers', fn ($req, $res) => $subscriberController->create($req, $res));
 }
 
 $app->run();
