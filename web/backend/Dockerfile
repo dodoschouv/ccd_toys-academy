@@ -11,7 +11,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     libzip-dev \
-    && docker-php-ext-install zip \
+    && docker-php-ext-install zip pdo_mysql \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY . .
