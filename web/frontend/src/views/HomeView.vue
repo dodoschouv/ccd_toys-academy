@@ -45,23 +45,34 @@ async function copyUrl() {
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto px-4 py-10">
-    <section class="flex flex-col items-center justify-center mb-12 pt-6">
-      <img
-        :src="logoImg"
-        alt="Toys Academy"
-        class="h-40 w-auto object-contain logo-flying mb-6"
-      />
-      <h2 class="text-2xl font-semibold text-slate-800 tracking-tight mb-1">
-        Bienvenue
-      </h2>
-      <p class="text-slate-600 text-center max-w-xl mx-auto mb-8">
-        Collecte, tri, nettoyage et revalorisation de dons de jeux, jouets et livres pour enfants. Revente à prix solidaires en boutique/e-shop. Ateliers parentalité et de sensibilisation à l'environnement avec de l'upcycling de jouets pour s'approprier l'anti-gaspi de façon ludique.
-      </p>
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <section class="flex flex-col sm:flex-row sm:items-center gap-10 sm:gap-16 mb-12 pt-6 min-h-[85vh]">
+      <div class="flex justify-center sm:justify-start shrink-0">
+        <img
+          :src="logoImg"
+          alt="Toys Academy"
+          class="h-52 sm:h-72 w-auto object-contain logo-flying"
+        />
+      </div>
+      <div class="flex flex-col items-center sm:items-start text-center sm:text-left flex-1 min-w-0">
+        <h2 class="text-3xl sm:text-5xl font-bold text-slate-800 tracking-tight mb-6">
+          Bienvenue
+        </h2>
+        <p class="text-slate-600 w-full max-w-none mb-10 text-base sm:text-lg leading-loose sm:leading-[1.8]">
+          Collecte, tri, nettoyage et revalorisation de dons de jeux, jouets et livres pour enfants. Revente à prix solidaires en boutique/e-shop. Ateliers parentalité et de sensibilisation à l'environnement avec de l'upcycling de jouets pour s'approprier l'anti-gaspi de façon ludique.
+        </p>
+        <a
+          href="#ou-nous-trouver"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-900 text-white text-base font-medium hover:bg-blue-800 transition-colors shrink-0"
+        >
+          <span class="material-symbols-outlined text-[20px]">location_on</span>
+          Où nous trouver
+        </a>
+      </div>
     </section>
 
     <!-- Carte & Adresse -->
-    <section class="mx-4 sm:mx-auto sm:max-w-4xl">
+    <section id="ou-nous-trouver" class="mx-4 sm:mx-auto sm:max-w-4xl scroll-mt-6">
       <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div class="bg-slate-50/80 px-6 py-4 border-b border-slate-100 flex flex-wrap items-center gap-3">
           <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-200/80 text-slate-800">
