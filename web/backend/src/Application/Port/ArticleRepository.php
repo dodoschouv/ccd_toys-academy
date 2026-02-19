@@ -11,6 +11,11 @@ interface ArticleRepository
     /** @return Article[] */
     public function findAll(): array;
 
+    /**
+     * @return array{items: Article[], total: int}
+     */
+    public function findPaginated(int $page, int $perPage): array;
+
     public function getById(string $id): ?Article;
 
     public function save(Article $article): void;

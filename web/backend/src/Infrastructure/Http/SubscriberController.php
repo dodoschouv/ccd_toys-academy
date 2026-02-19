@@ -6,13 +6,31 @@ namespace ToysAcademy\Infrastructure\Http;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ToysAcademy\Application\ListSubscribers;
 use ToysAcademy\Application\SaveSubscriber;
+use ToysAcademy\Domain\Subscriber;
 
 final class SubscriberController
 {
     public function __construct(
         private SaveSubscriber $saveSubscriber,
+        private ListSubscribers $listSubscribers,
     ) {
+    }
+
+    public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $subscribers = ($this->listSubscribers)();
+        $data = array_map(fn (Subscriber $s) => [
+            'id' => $s->id,
+            'first_name' => $s->firstName,
+            'last_name' => $s->lastName,
+            'email' => $s->email,
+            'child_age_range' => $s->childAgeRange,
+            'preferences' => $s->preferences,
+        ], $subscribers);
+        $response->getBody()->write(json_encode($data));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function create(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface

@@ -26,8 +26,16 @@ final class ArticleController
 
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $articles = ($this->listArticles)();
-        $data = array_map(fn ($a) => $this->articleToArray($a), $articles);
+        $params = $request->getQueryParams();
+        $page = isset($params['page']) ? (int) $params['page'] : 1;
+        $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 10;
+        $result = ($this->listArticles)($page, $perPage);
+        $data = [
+            'data' => array_map(fn ($a) => $this->articleToArray($a), $result['items']),
+            'total' => $result['total'],
+            'page' => $page,
+            'per_page' => $perPage,
+        ];
         $response->getBody()->write(json_encode($data));
         return $response->withHeader('Content-Type', 'application/json');
     }
