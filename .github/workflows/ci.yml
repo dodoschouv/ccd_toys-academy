@@ -117,30 +117,25 @@ jobs:
   # ──────────────────────────────────────────────────────────────────────────
   deploy:
     name: 🚀 Deploy sur Docketu
-    runs-on: ubuntu-latest
-    needs: build-and-push   # Attend que les 3 builds soient verts
+    runs-on: self-hosted   # Tourne directement sur le serveur Docketu
+    needs: build-and-push  # Attend que les 3 builds soient verts
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: 🚀 Déploiement via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/ccd_toys-academy
+      - name: 🚀 Déploiement
+        run: |
+          cd ~/ccd_toys-academy
 
-            # Récupère les dernières modifications (docker-compose, etc.)
-            git pull --rebase
+          # Récupère les dernières modifications (docker-compose, etc.)
+          git pull --rebase
 
-            # Télécharge les nouvelles images depuis ghcr.io
-            docker compose -f docker-compose.prod.yml pull
+          # Télécharge les nouvelles images depuis ghcr.io
+          docker compose -f docker-compose.prod.yml pull
 
-            # Redémarre les conteneurs avec les nouvelles images
-            docker compose -f docker-compose.prod.yml up -d
+          # Redémarre les conteneurs avec les nouvelles images
+          docker compose -f docker-compose.prod.yml up -d
 
-            # Affiche l'état final des conteneurs
-            echo "=== Conteneurs en cours ==="
-            docker compose -f docker-compose.prod.yml ps
+          # Affiche l'état final des conteneurs
+          echo "=== Conteneurs en cours ==="
+          docker compose -f docker-compose.prod.yml ps
 
