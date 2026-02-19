@@ -6,6 +6,7 @@ Application web (gestion articles, abonnés). Optimisation des box prévue plus 
 
 - **Frontend** : Vue 3 + Vite + Tailwind CSS 4 (service dédié, nginx)
 - **Backend** : PHP 8.5 Slim (API, service dédié)
+- **Optimisation** : Python 3.12 + FastAPI
 - **Base de données** : MariaDB 12
 
 ## Lancer avec Docker
