@@ -12,6 +12,8 @@ Application web de gestion d’articles et d’abonnés, avec composition de box
 - **Optimisation** : Java 17 (composition des box)
 - **Base de données** : MariaDB 12
 
+Pour consulter les choix des technologies : [POURQUOI.md](POURQUOI.md).
+
 ## Lancer le projet
 
 ```bash
@@ -23,6 +25,7 @@ docker compose up --build
 - **MariaDB** : `localhost:3306`, user `toys`, password `toys`, base `toys_academy`
 
 ---
+
 
 ## Liens vers les README détaillés
 

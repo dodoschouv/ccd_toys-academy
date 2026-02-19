@@ -110,13 +110,3 @@ web/
 docker-compose.yml  # web-backend, web-frontend, db
 database/           # schema.sql (init MariaDB)
 ```
-
-## Dépendances backend (composer)
-
-- **Avec Docker** : `composer install` est exécuté **à chaque build** de l'image (`docker compose up --build`). Aucune action à faire.
-- **Sans Docker** : à la racine, lancer `./scripts/install-backend-deps.sh` (Linux/Mac/Git Bash) ou `.\scripts\install-backend-deps.ps1` (PowerShell), ou dans `web/backend/` : `composer install`.
-
-## Dev local (sans Docker)
-
-- **Backend** : dans `web/backend/`, `composer install` (inclut `firebase/php-jwt` pour l’auth) puis `php -S 0.0.0.0:8080 -t public/`. Optionnel : définir `JWT_SECRET` dans l’environnement (sinon une valeur par défaut est utilisée en dev).
-- **Frontend** : dans `web/frontend/`, `npm install` puis `npm run dev` (Vite proxy `/api` → `http://localhost:8080`)
