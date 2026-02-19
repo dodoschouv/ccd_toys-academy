@@ -1,6 +1,11 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import api from '../api/index.js'
+import { setSubscriberEmail, getSubscriberEmail, clearSubscriberEmail } from '../utils/subscriberCookie.js'
+
+const base = import.meta.env.VITE_API_URL ? '' : '/api'
+const subscribersPath = () => `${base}/subscribers`
+const byEmailPath = () => `${base}/subscribers/by-email`
 
 const activeSection = ref('connexion')
 
@@ -31,6 +36,35 @@ const connexionError = ref('')
 const inscriptionMessage = ref('')
 const inscriptionError = ref('')
 const inscriptionLoading = ref(false)
+const profileLoadedFromCookie = ref(false)
+
+async function loadProfileByEmail(emailValue) {
+  if (!emailValue.trim()) return
+  try {
+    const { data } = await api.get(byEmailPath(), { params: { email: emailValue.trim() } })
+    if (data) {
+      lastName.value = data.last_name ?? ''
+      firstName.value = data.first_name ?? ''
+      subscriberEmail.value = data.email ?? emailValue.trim()
+      childAgeRange.value = data.child_age_range ?? ''
+      preferences.value = Array.isArray(data.preferences) && data.preferences.length
+        ? data.preferences
+        : ['SOC', 'FIG', 'CON', 'EXT', 'EVL', 'LIV']
+      profileLoadedFromCookie.value = true
+      activeSection.value = 'inscription'
+    }
+  } catch {
+    // Abonné inconnu ou erreur : on garde juste l'email pré-rempli
+  }
+}
+
+onMounted(() => {
+  const savedEmail = getSubscriberEmail()
+  if (savedEmail) {
+    email.value = savedEmail
+    loadProfileByEmail(savedEmail)
+  }
+})
 
 async function submitConnexion() {
   connexionError.value = ''
@@ -38,7 +72,9 @@ async function submitConnexion() {
     connexionError.value = 'Saisissez votre email.'
     return
   }
-  console.log('Connexion avec', email.value, password.value)
+  // Pour l'instant pas d'auth côté API : on peut pré-remplir et rediriger vers Ma box ou Inscription
+  activeSection.value = 'inscription'
+  await loadProfileByEmail(email.value)
 }
 
 async function submitInscription() {
@@ -54,19 +90,33 @@ async function submitInscription() {
   }
   inscriptionLoading.value = true
   try {
-    await api.post('/api/subscribers', {
+    await api.post(subscribersPath(), {
       last_name: lastName.value.trim(),
       first_name: firstName.value.trim(),
       email: subscriberEmail.value.trim(),
       child_age_range: childAgeRange.value,
       preferences: preferences.value,
     })
-    inscriptionMessage.value = 'Inscription enregistrée.'
+    setSubscriberEmail(subscriberEmail.value.trim())
+    inscriptionMessage.value = 'Inscription enregistrée. Vos informations seront réutilisées lors de votre prochaine visite.'
   } catch (e) {
     inscriptionError.value = e.response?.data?.error || 'Erreur lors de l\'inscription.'
   } finally {
     inscriptionLoading.value = false
   }
+}
+
+function useAnotherEmail() {
+  clearSubscriberEmail()
+  profileLoadedFromCookie.value = false
+  email.value = ''
+  lastName.value = ''
+  firstName.value = ''
+  subscriberEmail.value = ''
+  childAgeRange.value = ''
+  preferences.value = ['SOC', 'FIG', 'CON', 'EXT', 'EVL', 'LIV']
+  inscriptionMessage.value = ''
+  inscriptionError.value = ''
 }
 
 function movePreference(index, direction) {
@@ -139,7 +189,20 @@ function movePreference(index, direction) {
     </section>
 
     <section v-show="activeSection === 'inscription'" class="rounded-lg border border-slate-200 bg-white p-6">
-      <h3 class="text-lg font-medium text-slate-800 mb-4">S'inscrire ou modifier mes préférences</h3>
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <h3 class="text-lg font-medium text-slate-800">S'inscrire ou modifier mes préférences</h3>
+        <button
+          v-if="profileLoadedFromCookie || getSubscriberEmail()"
+          type="button"
+          @click="useAnotherEmail"
+          class="text-sm text-slate-500 hover:text-slate-700 underline"
+        >
+          Utiliser un autre email
+        </button>
+      </div>
+      <p v-if="profileLoadedFromCookie" class="mb-4 text-sm text-slate-600 bg-slate-50 rounded-md px-3 py-2">
+        Profil chargé. Vous pouvez modifier vos préférences ci-dessous.
+      </p>
       <form @submit.prevent="submitInscription" class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
           <div>
