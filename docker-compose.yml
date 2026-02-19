@@ -10,8 +10,8 @@ services:
       - OPTIMIZATION_URL=http://optimisation:80
       - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:8080}
     depends_on:
-      db:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     networks:
       - toys-net
 
@@ -58,6 +58,20 @@ services:
     networks:
       - toys-net
 
+  db-init:
+    image: mariadb:12
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - "mariadb -h db -u toys -ptoys toys_academy < /schema.sql && echo Schema appliqué."
+    volumes:
+      - ./database/schema.sql:/schema.sql:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - toys-net
+    restart: "no"
+
   adminer:
     image: adminer:latest
     ports:
@@ -66,8 +80,8 @@ services:
       ADMINER_DEFAULT_SERVER: db
       ADMINER_DESIGN: pepa-linha
     depends_on:
-      db:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     networks:
       - toys-net
 
