@@ -29,7 +29,11 @@ final class ArticleController
         $params = $request->getQueryParams();
         $page = isset($params['page']) ? (int) $params['page'] : 1;
         $perPage = isset($params['per_page']) ? (int) $params['per_page'] : 10;
-        $result = ($this->listArticles)($page, $perPage);
+        $category = isset($params['category']) && (string) $params['category'] !== '' ? (string) $params['category'] : null;
+        $ageRange = isset($params['age_range']) && (string) $params['age_range'] !== '' ? (string) $params['age_range'] : null;
+        $state = isset($params['state']) && (string) $params['state'] !== '' ? (string) $params['state'] : null;
+
+        $result = ($this->listArticles)($page, $perPage, $category, $ageRange, $state);
         $data = [
             'data' => array_map(fn ($a) => $this->articleToArray($a), $result['items']),
             'total' => $result['total'],

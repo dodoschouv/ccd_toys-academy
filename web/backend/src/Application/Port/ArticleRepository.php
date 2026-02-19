@@ -14,7 +14,7 @@ interface ArticleRepository
     /**
      * @return array{items: Article[], total: int}
      */
-    public function findPaginated(int $page, int $perPage): array;
+    public function findPaginated(int $page, int $perPage, ?string $category = null, ?string $ageRange = null, ?string $state = null): array;
 
     public function getById(string $id): ?Article;
 

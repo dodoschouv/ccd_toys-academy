@@ -5,8 +5,8 @@ Application web (gestion articles, abonnés). Optimisation des box prévue plus 
 ## Stack
 
 - **Frontend** : Vue 3 + Vite + Tailwind CSS 4 (service dédié, nginx)
-- **Backend** : PHP 8.5 Slim (API, service dédié)
 - **Optimisation** : Python 3.12 + FastAPI
+- **Backend** : PHP 8.5 Slim (API, service dédié)
 - **Base de données** : MariaDB 12
 
 ## Lancer avec Docker
@@ -47,7 +47,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 
 | Ref | Description | Statut |
 |-----|-------------|--------|
-| **W12** | Filtrage catalogue : par catégorie, tranche d’âge, état (3) | ❌ Non fait |
+| **W12** | Filtrage catalogue : par catégorie, tranche d’âge, état (3) | ✅ Fait — `GET /api/articles?category=&age_range=&state=` |
 | **W13** | Modification d’un article (admin), pré-remplissage ; interdire si article dans une box validée (4) | ⚠️ Partiel — `PUT /api/admin/articles/{id}` en place ; pas de vérification « déjà dans box validée » |
 | **W14** | Code-barre / QR : association à un article, recherche par scan/saisie (5) | ⚠️ Partiel — champ `barcode` en BDD et en API ; pas d’endpoint/recherche dédiée |
 | **W15** | Modification des préférences abonné (email pour retrouver le profil) (8) | ❌ Non fait — pas de `PUT/PATCH` abonné par email |
@@ -72,7 +72,7 @@ Le frontend (nginx) reverse-proxy les appels `/api` vers le backend, donc une se
 |--------|--------|------|
 | GET | `/api/health` | Health check |
 | GET | `/api/reference` | Catégories, tranches d’âge, états (formulaires) |
-| GET | `/api/articles` | Catalogue paginé (`page`, `per_page`) |
+| GET | `/api/articles` | Catalogue paginé (`page`, `per_page`) ; filtres optionnels : `category`, `age_range`, `state` |
 | GET | `/api/articles/{id}` | Détail article |
 | POST | `/api/admin/articles` | Ajout article |
 | PUT | `/api/admin/articles/{id}` | Modification article |

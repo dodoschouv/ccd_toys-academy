@@ -28,15 +28,37 @@ final class PdoArticleRepository implements ArticleRepository
     }
 
     /** @return array{items: Article[], total: int} */
-    public function findPaginated(int $page, int $perPage): array
+    public function findPaginated(int $page, int $perPage, ?string $category = null, ?string $ageRange = null, ?string $state = null): array
     {
-        $offset = ($page - 1) * $perPage;
-        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM article');
-        $stmt->execute();
+        $where = [];
+        $params = [];
+        if ($category !== null && $category !== '') {
+            $where[] = 'category = ?';
+            $params[] = $category;
+        }
+        if ($ageRange !== null && $ageRange !== '') {
+            $where[] = 'age_range = ?';
+            $params[] = $ageRange;
+        }
+        if ($state !== null && $state !== '') {
+            $where[] = 'state = ?';
+            $params[] = $state;
+        }
+        $whereClause = $where === [] ? '' : ' WHERE ' . implode(' AND ', $where);
+
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM article' . $whereClause);
+        $stmt->execute($params);
         $total = (int) $stmt->fetchColumn();
-        $stmt = $this->pdo->prepare('SELECT * FROM article ORDER BY created_at DESC LIMIT ? OFFSET ?');
-        $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
-        $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+
+        $sql = 'SELECT * FROM article' . $whereClause . ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+        $stmt = $this->pdo->prepare($sql);
+        $i = 1;
+        foreach ($params as $p) {
+            $stmt->bindValue($i++, $p);
+        }
+        $offset = ($page - 1) * $perPage;
+        $stmt->bindValue($i++, $perPage, PDO::PARAM_INT);
+        $stmt->bindValue($i, $offset, PDO::PARAM_INT);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $items = [];

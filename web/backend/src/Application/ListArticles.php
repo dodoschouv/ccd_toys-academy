@@ -17,10 +17,15 @@ final class ListArticles
     /**
      * @return array{items: Article[], total: int}
      */
-    public function __invoke(int $page = 1, int $perPage = 10): array
-    {
+    public function __invoke(
+        int $page = 1,
+        int $perPage = 10,
+        ?string $category = null,
+        ?string $ageRange = null,
+        ?string $state = null,
+    ): array {
         $page = max(1, $page);
         $perPage = max(1, min(100, $perPage));
-        return $this->articleRepository->findPaginated($page, $perPage);
+        return $this->articleRepository->findPaginated($page, $perPage, $category, $ageRange, $state);
     }
 }
