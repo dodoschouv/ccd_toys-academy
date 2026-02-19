@@ -1,0 +1,15 @@
+RewriteEngine On
+RewriteBase /
+
+# API -> Slim
+RewriteCond %{REQUEST_URI} ^/api
+RewriteRule ^ api.php [QSA,L]
+
+# Fichiers existants
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# SPA Vue (fallback)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]

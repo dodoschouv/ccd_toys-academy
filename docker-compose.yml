@@ -1,0 +1,53 @@
+services:
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - DATABASE_URL=mysql://toys:toys@db:3306/toys_academy
+      - OPTIMIZATION_URL=http://optimization:8000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - toys-net
+
+  optimization:
+    build:
+      context: ./optimization
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - toys-net
+
+  db:
+    image: mariadb:11.2
+    environment:
+      MARIADB_USER: toys
+      MARIADB_PASSWORD: toys
+      MARIADB_DATABASE: toys_academy
+      MARIADB_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - toys-net
+
+volumes:
+  db_data:
+
+networks:
+  toys-net:
+    driver: bridge
