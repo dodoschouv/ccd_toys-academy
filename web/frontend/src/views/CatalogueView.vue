@@ -1,13 +1,11 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useArticleStore } from '../stores/articleStore'
 
 const articleStore = useArticleStore()
-const { articles, loading } = storeToRefs(articleStore)
-
-const currentPage = ref(1)
-const itemsPerPage = 10
+// On récupère toutes les infos du store de manière réactive
+const { articles, total, loading, currentPage, itemsPerPage } = storeToRefs(articleStore)
 
 const categoriesMap = {
   'SOC': 'Jeux de société',
@@ -20,16 +18,26 @@ const categoriesMap = {
 
 const formatCategory = (code) => categoriesMap[code] || code
 
-const totalPages = computed(() => Math.ceil(articles.value.length / itemsPerPage))
-
-const paginatedArticles = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return articles.value.slice(start, end)
+const totalPages = computed(() => {
+  if (itemsPerPage.value === 0) return 1;
+  return Math.ceil(total.value / itemsPerPage.value);
 })
 
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    articleStore.changePage(currentPage.value + 1)
+  }
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    articleStore.changePage(currentPage.value - 1)
+  }
+}
+
+// Au chargement du composant, on demande la page 1
 onMounted(() => {
-  articleStore.fetchArticles()
+  articleStore.fetchArticles(1, 10)
 })
 </script>
 
@@ -38,7 +46,7 @@ onMounted(() => {
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold text-slate-800">Catalogue des articles</h2>
       <span class="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full">
-        {{ articles.length }} articles disponibles
+        {{ total }} articles au total
       </span>
     </div>
 
@@ -49,7 +57,7 @@ onMounted(() => {
     <div v-else>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         <div
-            v-for="article in paginatedArticles"
+            v-for="article in articles"
             :key="article.id"
             class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col hover:shadow-md transition-shadow"
         >
@@ -78,9 +86,9 @@ onMounted(() => {
 
       <div class="flex justify-center items-center space-x-4 mt-8" v-if="totalPages > 1">
         <button
-            @click="currentPage--"
+            @click="prevPage"
             :disabled="currentPage === 1"
-            class="px-4 py-2 rounded-lg font-medium transition-colors"
+            class="px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer"
             :class="currentPage === 1 ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'"
         >
           Précédent
@@ -91,9 +99,9 @@ onMounted(() => {
         </span>
 
         <button
-            @click="currentPage++"
+            @click="nextPage"
             :disabled="currentPage === totalPages"
-            class="px-4 py-2 rounded-lg font-medium transition-colors"
+            class="px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer"
             :class="currentPage === totalPages ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'"
         >
           Suivant
