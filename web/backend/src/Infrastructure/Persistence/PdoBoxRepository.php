@@ -58,6 +58,21 @@ final class PdoBoxRepository implements BoxRepository
         return $result;
     }
 
+    /** @return Box[] */
+    public function findValidatedBySubscriberId(string $subscriberId): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM box WHERE subscriber_id = ? AND status = ? ORDER BY validated_at DESC, id DESC'
+        );
+        $stmt->execute([$subscriberId, Box::STATUS_VALIDATED]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = [];
+        foreach ($rows as $row) {
+            $result[] = $this->rowToBox($row);
+        }
+        return $result;
+    }
+
     public function getById(int $id): ?Box
     {
         $stmt = $this->pdo->prepare('SELECT * FROM box WHERE id = ?');

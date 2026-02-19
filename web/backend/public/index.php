@@ -7,6 +7,7 @@ use ToysAcademy\Application\CreateArticle;
 use ToysAcademy\Application\CreateCampaign;
 use ToysAcademy\Application\DeleteArticle;
 use ToysAcademy\Application\GetReferenceData;
+use ToysAcademy\Application\GetValidatedBoxesForSubscriberByEmail;
 use ToysAcademy\Application\ListArticles;
 use ToysAcademy\Application\ListBoxesForCampaign;
 use ToysAcademy\Application\ListCampaigns;
@@ -83,10 +84,11 @@ if ($databaseUrl !== '') {
     $createCampaign = new CreateCampaign($campaignRepository);
     $runComposition = new RunComposition($campaignRepository, $articleRepository, $subscriberRepository, $boxRepository, $optimisationService);
     $listBoxesForCampaign = new ListBoxesForCampaign($campaignRepository, $boxRepository, $articleRepository, $subscriberRepository);
+    $getValidatedBoxesForSubscriberByEmail = new GetValidatedBoxesForSubscriberByEmail($subscriberRepository, $boxRepository, $articleRepository);
 
     $articleController = new ArticleController($listArticles, $articleRepository, $createArticle, $updateArticle, $deleteArticle);
     $referenceController = new ReferenceController($getReferenceData);
-    $subscriberController = new SubscriberController($saveSubscriber, $listSubscribers, $subscriberRepository);
+    $subscriberController = new SubscriberController($saveSubscriber, $listSubscribers, $subscriberRepository, $getValidatedBoxesForSubscriberByEmail);
     $campaignController = new CampaignController($listCampaigns, $createCampaign, $runComposition, $listBoxesForCampaign);
 
     $app->get('/api/reference', fn ($req, $res) => $referenceController->index($req, $res));
@@ -97,6 +99,7 @@ if ($databaseUrl !== '') {
     $app->delete('/api/admin/articles/{id}', fn ($req, $res, $args) => $articleController->delete($req, $res, $args));
     $app->get('/api/subscribers', fn ($req, $res) => $subscriberController->index($req, $res));
     $app->get('/api/subscribers/by-email', fn ($req, $res) => $subscriberController->getByEmail($req, $res));
+    $app->get('/api/subscribers/box', fn ($req, $res) => $subscriberController->getMyBox($req, $res));
     $app->post('/api/subscribers', fn ($req, $res) => $subscriberController->create($req, $res));
     $app->get('/api/admin/campaigns', fn ($req, $res) => $campaignController->index($req, $res));
     $app->post('/api/admin/campaigns', fn ($req, $res) => $campaignController->create($req, $res));

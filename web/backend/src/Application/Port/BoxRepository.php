@@ -17,6 +17,9 @@ interface BoxRepository
     /** @return Box[] */
     public function findByCampaign(int $campaignId): array;
 
+    /** @return Box[] Box validées pour cet abonné, par date de validation décroissante */
+    public function findValidatedBySubscriberId(string $subscriberId): array;
+
     public function getById(int $id): ?Box;
 
     /** @return string[] Liste des IDs d'articles dans la box */
