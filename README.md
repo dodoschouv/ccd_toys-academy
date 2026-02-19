@@ -1,6 +1,11 @@
 # Toys Academy — CCD 2026
 
+[![CI/CD](https://github.com/dodoschouv/ccd_toys-academy/actions/workflows/ci.yml/badge.svg)](https://github.com/dodoschouv/ccd_toys-academy/actions/workflows/ci.yml)
+
+🌐 **Application en live** : http://docketu.iutnc.univ-lorraine.fr:8082
+
 Application web (gestion articles, abonnés). Optimisation des box prévue plus tard.
+
 
 ## Stack
 
