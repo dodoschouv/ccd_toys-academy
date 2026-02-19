@@ -28,9 +28,9 @@ services:
     networks:
       - toys-net
 
-  optimization:
+  optimisation:
     build:
-      context: ./optimization
+      context: ./optimisation
       dockerfile: Dockerfile
     expose:
       - "80"
