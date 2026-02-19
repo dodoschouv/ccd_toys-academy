@@ -3,6 +3,8 @@
 
 Application web de gestion d’articles et d’abonnés, avec composition de box optimisée.
 
+**Application en live** : http://docketu.iutnc.univ-lorraine.fr:8082
+
 ## Stack
 
 - **Frontend** : Vue 3 + Vite + Tailwind CSS 4 (nginx)
