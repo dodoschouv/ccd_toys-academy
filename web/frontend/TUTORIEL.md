@@ -52,6 +52,7 @@ Réservé aux abonnés connectés. Affiche l'historique des box validées reçue
 
 <img width="1898" height="942" alt="image" src="https://github.com/user-attachments/assets/2898d19a-9f51-4063-9147-7791eee65eaa" />
 
+<img width="1914" height="941" alt="image" src="https://github.com/user-attachments/assets/ae389467-fda5-4f8a-99d6-fc7439206aeb" />
 
 
 ---

@@ -3,7 +3,9 @@
 
 Application web de gestion d’articles et d’abonnés, avec composition de box optimisée.
 
-**Application en live** : http://docketu.iutnc.univ-lorraine.fr:8082
+## URL ##
+- **Github** : https://github.com/dodoschouv/ccd_toys-academy
+- **Application en live** : http://docketu.iutnc.univ-lorraine.fr:8082
 
 ## Liste des membres
 - CANDIDO DELLA MORA Léo (DACS)
@@ -164,3 +166,7 @@ optimisation/
 --- 
 ## Routes
 Pour consulter les routes API : [ROUTES.md](ROUTES.md).
+
+# User
+- email : admin@mail.com
+- mdp : admin.admin
