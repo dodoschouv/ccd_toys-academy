@@ -22,7 +22,27 @@ INSERT IGNORE INTO `article` (`id`, `designation`, `category`, `age_range`, `sta
 ('a17', 'Jeu de Cartes Uno', 'SOC', 'EN', 'TB', 3, 100, NULL),
 ('a18', 'Trottinette Bleue', 'EXT', 'EN', 'N', 18, 2500, NULL),
 ('a19', 'Livre "Harry Potter Tome 1"', 'LIV', 'AD', 'N', 7, 300, NULL),
-('a20', 'Puzzle 500 pièces Paysage', 'CON', 'AD', 'N', 8, 600, NULL);
+('a20', 'Puzzle 500 pièces Paysage', 'CON', 'AD', 'N', 8, 600, NULL),
+('a21', 'Dobble Kids', 'SOC', 'PE', 'TB', 4, 150, NULL),
+('a22', 'Figurine Dinosaure T-Rex', 'FIG', 'EN', 'N', 6, 250, NULL),
+('a23', 'Magnetibook Lettres', 'EVL', 'PE', 'N', 9, 450, NULL),
+('a24', 'Livre "T''choupi à l''école"', 'LIV', 'PE', 'TB', 4, 180, NULL),
+('a25', 'Set de Billes et Tac', 'EXT', 'EN', 'B', 3, 200, NULL),
+('a26', 'Cluedo Junior', 'SOC', 'EN', 'N', 11, 500, NULL),
+('a27', 'Peluche Lapin Gris', 'FIG', 'BB', 'TB', 5, 180, NULL),
+('a28', 'Lego Duplo Train', 'CON', 'PE', 'N', 18, 1200, NULL),
+('a29', 'Corde à sauter', 'EXT', 'EN', 'N', 4, 150, NULL),
+('a30', 'Livre "Les P''tites Poules"', 'LIV', 'PE', 'N', 5, 220, NULL),
+('a31', 'Jeu de Dames', 'SOC', 'EN', 'TB', 6, 400, NULL),
+('a32', 'Puzzle 100 pièces Animaux', 'EVL', 'PE', 'N', 5, 350, NULL),
+('a33', 'Toboggan Jardin', 'EXT', 'PE', 'B', 35, 8000, NULL),
+('a34', 'Poupée Corolle Bébé', 'FIG', 'PE', 'N', 12, 350, NULL),
+('a35', 'Coffret Peinture Gouache', 'CON', 'EN', 'N', 7, 400, NULL),
+('a36', 'Livre "Mortelle Adèle"', 'LIV', 'EN', 'TB', 6, 250, NULL),
+('a37', 'Mikado Géant', 'SOC', 'EN', 'N', 8, 500, NULL),
+('a38', 'Trottinette 3 roues', 'EXT', 'PE', 'N', 22, 2800, NULL),
+('a39', 'Figurine Super Héros', 'FIG', 'EN', 'B', 5, 200, NULL),
+('a40', 'Cubes Numéros 1-10', 'EVL', 'PE', 'N', 5, 280, NULL);
 
 -- Abonnés d'exemple (selon le format de l'exemple fourni)
 INSERT IGNORE INTO `subscriber` (`id`, `last_name`, `first_name`, `email`, `child_age_range`, `preference_1`, `preference_2`, `preference_3`, `preference_4`, `preference_5`, `preference_6`) VALUES
